@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import './Dashboard.css';
 
 const allItems = [
@@ -31,16 +32,64 @@ const allItems = [
   { icon: 'user', label: 'Organization Chart', category: 'Employee', starred: false },
   { icon: 'user', label: 'Assign Manager', category: 'Employee', starred: false },
   // Payroll
+  { icon: 'db', label: 'Stop Salary Processing', category: 'Payroll', starred: false },
+  { icon: 'db', label: 'Deduct Loss Of Pay (LOP)', category: 'Payroll', starred: false },
+  { icon: 'db', label: 'Print / Email Payslips', category: 'Payroll', starred: false },
+  { icon: 'db', label: 'Settle Resigned Employee', category: 'Payroll', starred: false },
+  { icon: 'db', label: 'Print / Email Reimbursement Payslip', category: 'Payroll', starred: false },
+  { icon: 'db', label: 'Arrears', category: 'Payroll', starred: false },
+  { icon: 'db', label: 'Update Employee PAN Number', category: 'Payroll', starred: false },
+  { icon: 'db', label: 'Revise Employee Salary', category: 'Payroll', starred: false },
   { icon: 'db', label: 'Process Payroll', category: 'Payroll', starred: true },
+  { icon: 'db', label: 'Release IT Declaration Form', category: 'Payroll', starred: false },
+  { icon: 'db', label: 'Download IT Declaration For TDS', category: 'Payroll', starred: false },
+  { icon: 'db', label: 'Create New Payroll Month', category: 'Payroll', starred: false },
   { icon: 'db', label: 'Update Payroll Data', category: 'Payroll', starred: true },
-  { icon: 'db', label: 'Salary Statement', category: 'Payroll', starred: true },
-  { icon: 'db', label: 'Run Payroll', category: 'Payroll', starred: false },
-  { icon: 'db', label: 'Salary statement for a month', category: 'Payroll', starred: false },
+  { icon: 'db', label: 'Pay Arrears', category: 'Payroll', starred: false },
+  { icon: 'db', label: 'Verify Payroll Differences', category: 'Payroll', starred: false },
+  { icon: 'db', label: 'Generate Payroll Statement', category: 'Payroll', starred: false },
+  { icon: 'db', label: 'Generate Accounts JV', category: 'Payroll', starred: false },
+  { icon: 'db', label: 'Release Payslip to Employees', category: 'Payroll', starred: false },
+  { icon: 'db', label: 'Clean Up Payroll', category: 'Payroll', starred: false },
+  { icon: 'db', label: 'Hold Salary Payout', category: 'Payroll', starred: false },
+  { icon: 'db', label: 'Release Salary Payout', category: 'Payroll', starred: false },
+  { icon: 'db', label: 'Resettle Employee', category: 'Payroll', starred: false },
+  { icon: 'db', label: 'Add TDS Challan', category: 'Payroll', starred: false },
+  { icon: 'db', label: 'Bank Transfer', category: 'Payroll', starred: false },
+  { icon: 'db', label: 'Track Cash/Cheque Payment', category: 'Payroll', starred: false },
+  { icon: 'db', label: 'PF KYC Mapping', category: 'Payroll', starred: false },
+  { icon: 'db', label: 'Salary statement for a month', category: 'Payroll', starred: true },
+  { icon: 'db', label: 'Employee wise payslip release', category: 'Payroll', starred: false },
   // Leave
-  { icon: 'user', label: 'Manage Leave', category: 'Leave', starred: false },
-  { icon: 'user', label: 'Approve Leave', category: 'Leave', starred: false },
+  { icon: 'calendar', label: 'Add Holidays', category: 'Leave', starred: false },
+  { icon: 'calendar', label: 'Post Leave Transaction', category: 'Leave', starred: false },
+  { icon: 'calendar', label: 'Grant Leave', category: 'Leave', starred: false },
+  { icon: 'calendar', label: 'Year End Process', category: 'Leave', starred: false },
+  { icon: 'calendar', label: 'Download Leave Card', category: 'Leave', starred: false },
+  { icon: 'calendar', label: 'Apply On Behalf', category: 'Leave', starred: false },
+  { icon: 'calendar', label: 'Verify employee swipes', category: 'Leave', starred: false },
+  { icon: 'calendar', label: 'Attendance Muster', category: 'Leave', starred: false },
+  { icon: 'calendar', label: 'Manual Override', category: 'Leave', starred: false },
+  { icon: 'calendar', label: 'Shift Roster', category: 'Leave', starred: false },
+  { icon: 'calendar', label: 'Shift Override', category: 'Leave', starred: false },
+  { icon: 'calendar', label: 'Attendance Exception', category: 'Leave', starred: false },
+  { icon: 'calendar', label: 'Attendance Period Finalization', category: 'Leave', starred: false },
+  { icon: 'calendar', label: 'Update Sign in IP address', category: 'Leave', starred: false },
+  { icon: 'calendar', label: 'Who Is in ?', category: 'Leave', starred: false },
+  { icon: 'calendar', label: 'View Employee attendance', category: 'Leave', starred: false },
+  { icon: 'calendar', label: 'Approve leave', category: 'Leave', starred: false },
+  { icon: 'calendar', label: 'Approve leave cancellation', category: 'Leave', starred: false },
+  { icon: 'calendar', label: 'Approve RH', category: 'Leave', starred: false },
+  { icon: 'calendar', label: 'Leave Calendar', category: 'Leave', starred: false },
+  { icon: 'calendar', label: 'Approve Comp off', category: 'Leave', starred: false },
+  { icon: 'calendar', label: 'Update Employee weekdays', category: 'Leave', starred: false },
   // Other
-  { icon: 'db', label: 'Tax Filing', category: 'Other', starred: false },
+  { icon: 'folder', label: 'Upload Documents In Bulk', category: 'Other', starred: false },
+  { icon: 'folder', label: 'Set up workflow delegate for an employee', category: 'Other', starred: false },
+  { icon: 'folder', label: 'List of Values', category: 'Other', starred: false },
+  { icon: 'folder', label: 'Employee Position', category: 'Other', starred: false },
+  { icon: 'folder', label: 'Add New Bank Branch', category: 'Other', starred: false },
+  { icon: 'folder', label: 'Update Company Details', category: 'Other', starred: false },
 ];
 
 const categories = ['All', 'My Favourites', 'Employee', 'Payroll', 'Leave', 'Other'];
@@ -77,6 +126,23 @@ function Icon({ name }) {
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
         <circle cx="12" cy="8" r="4" />
         <path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7" />
+      </svg>
+    );
+  }
+  if (name === 'calendar') {
+    return (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+        <line x1="16" y1="2" x2="16" y2="6" />
+        <line x1="8" y1="2" x2="8" y2="6" />
+        <line x1="3" y1="10" x2="21" y2="10" />
+      </svg>
+    );
+  }
+  if (name === 'folder') {
+    return (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
       </svg>
     );
   }
@@ -216,11 +282,78 @@ function SettingsModal({ onClose, companyLogo, setCompanyLogo }) {
   );
 }
 
+function SearchPalette({ onClose }) {
+  // Prevent clicks inside modal from closing it
+  const handleClick = (e) => e.stopPropagation();
+
+  return (
+    <div className="gm-modal-backdrop" onClick={onClose} style={{ alignItems: 'flex-start', paddingTop: '10vh' }}>
+      <div className="gm-search-palette" onClick={handleClick}>
+        <div className="gm-search-palette-header">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2">
+            <circle cx="11" cy="11" r="7" />
+            <path d="M21 21l-4.3-4.3" />
+          </svg>
+          <input type="text" placeholder="Search any command or help and '/' for any data" autoFocus />
+        </div>
+        
+        <div className="gm-search-palette-body">
+          <div className="gm-search-palette-shortcuts">
+            <div className="gm-search-palette-label">
+              Shortcuts 
+              <span className="gm-help-icon">?</span>
+            </div>
+            <div className="gm-search-palette-pills">
+              <button>Pending leaves</button>
+              <button>Pre processing checklist</button>
+              <button>Post processing checklist</button>
+              <button>Employee Info</button>
+            </div>
+          </div>
+          
+          <div className="gm-search-palette-actions">
+            <div className="gm-search-palette-label" style={{ marginBottom: 8 }}>Quick Actions</div>
+            <div className="gm-search-palette-list">
+              {[
+                { icon: 'bell', title: 'Notifications - Recruitment', path: 'Your Apps > Recruitment > Notifications' },
+                { icon: 'message', title: 'Messages', path: 'Your Apps > Recruitment > Messages' },
+                { icon: 'user', title: 'Employee Portal', path: 'Your Apps > Recruitment > Profile > Employee Portal' },
+                { icon: 'briefcase', title: 'Career Portal', path: 'Your Apps > Recruitment > Profile > Career Page' },
+                { icon: 'download', title: 'Download Center', path: 'System > Download Center' }
+              ].map((item, idx) => (
+                <button key={idx} className="gm-search-action-item">
+                  <div className="gm-search-action-icon">
+                    {item.icon === 'bell' && <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 01-3.4 0"/></svg>}
+                    {item.icon === 'message' && <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>}
+                    {item.icon === 'user' && <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>}
+                    {item.icon === 'briefcase' && <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>}
+                    {item.icon === 'download' && <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>}
+                  </div>
+                  <div className="gm-search-action-text">
+                    <h4>{item.title}</h4>
+                    <p>{item.path}</p>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+        
+        <div className="gm-search-palette-footer">
+          Navigate <kbd>↑</kbd> <kbd>↓</kbd> 
+          <span style={{ marginLeft: 16 }}>To select <kbd>↵</kbd></span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function Dashboard({ userName = '' }) {
   const [tab, setTab] = useState('welcome');
-  const [companyLogo, setCompanyLogo] = useState(null);
+  const [companyLogo, setCompanyLogo] = useState('/Logos/logo.png');
   const [showModal, setShowModal] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
+  const [showSearchModal, setShowSearchModal] = useState(false);
   const [favourites, setFavourites] = useState([
     { icon: 'user', label: 'Add Employee' },
     { icon: 'db', label: 'Update Payroll Data' },
@@ -242,6 +375,17 @@ export default function Dashboard({ userName = '' }) {
     });
   };
 
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        setShowSearchModal(true);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
   return (
     <div className="gm-dash-screen">
       {/* Add Favourite Modal */}
@@ -262,20 +406,27 @@ export default function Dashboard({ userName = '' }) {
         />
       )}
 
+      {/* Search Palette Modal */}
+      {showSearchModal && (
+        <SearchPalette onClose={() => setShowSearchModal(false)} />
+      )}
+
       {/* Top nav */}
       <header className="gm-dash-nav">
-        {companyLogo ? (
-          <img src={companyLogo} alt="Company Logo" className="gm-brand-logo-img" />
-        ) : (
-          <div className="gm-brand-mark">
-            <div className="gm-brand-text-stack">
-              <span>GROW</span>
-              <span>MORE</span>
+        <Link to="/dashboard" style={{ textDecoration: 'none' }}>
+          {companyLogo ? (
+            <img src={companyLogo} alt="Company Logo" className="gm-brand-logo-img" />
+          ) : (
+            <div className="gm-brand-mark">
+              <div className="gm-brand-text-stack">
+                <span>GROW</span>
+                <span>MORE</span>
+              </div>
             </div>
-          </div>
-        )}
+          )}
+        </Link>
 
-        <div className="gm-nav-search">
+        <div className="gm-nav-search" onClick={() => setShowSearchModal(true)} style={{ cursor: 'pointer' }}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <circle cx="11" cy="11" r="7" />
             <path d="M21 21l-4.3-4.3" />
@@ -305,12 +456,14 @@ export default function Dashboard({ userName = '' }) {
         {/* Hero / greeting widget with time-of-day image */}
         <section className="gm-widget gm-widget-hero" style={{ backgroundImage: `url(${heroImage})` }}>
           <div className="gm-hero-overlay">
-            <div className="gm-dash-tabs">
-              <button className={tab === 'welcome' ? 'gm-tab active' : 'gm-tab'} onClick={() => setTab('welcome')}>Welcome</button>
-              <button className={tab === 'dashboard' ? 'gm-tab active' : 'gm-tab'} onClick={() => setTab('dashboard')}>Dashboard</button>
+            <div className="gm-hero-greeting-box">
+              <div className="gm-dash-tabs">
+                <button className={tab === 'welcome' ? 'gm-tab active' : 'gm-tab'} onClick={() => setTab('welcome')}>Welcome</button>
+                <button className={tab === 'dashboard' ? 'gm-tab active' : 'gm-tab'} onClick={() => setTab('dashboard')}>Dashboard</button>
+              </div>
+              <h1>{greeting}{userName ? `, ${userName}.` : '.'}</h1>
+              <p>Let's do great things today.</p>
             </div>
-            <h1>{greeting}{userName ? `, ${userName}.` : '.'}</h1>
-            <p>Let's do great things today.</p>
             <div className="gm-hero-stats">
               <div className="gm-hero-stat-block">
                 <span className="gm-hero-stat-num">0</span>
