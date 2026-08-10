@@ -1076,3 +1076,35 @@
     font-weight: 700;
     color: #1f2937;
 }
+
+/* ─── Leave Table ────────────────────────── */
+.gm-leave-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    font-family: 'Poppins', sans-serif;
+    border: 1px solid #e5e7eb;
+}
+
+.gm-leave-table thead tr {
+    background: #e6f4ef; /* Match theme green */
+}
+
+.gm-leave-table th {
+    padding: 10px 14px;
+    font-weight: 600;
+    font-size: 12px;
+    color: #1f2937;
+    border: 1px solid #ffffff;
+    text-align: left;
+}
+
+.gm-leave-table td {
+    padding: 10px 14px;
+    color: #374151;
+    border: 1px solid #e5e7eb;
+}
+
+.gm-leave-table tbody tr:hover {
+    background: #f9fafb;
+}

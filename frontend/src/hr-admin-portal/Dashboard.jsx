@@ -426,6 +426,14 @@ const ctcByLocationData = [
   { location: 'AHMEDABAD', ctc: 927500, employees: 56 },
 ];
 
+const leaveTakerData = [
+  { empNo: 'GM015', name: 'Nandani Devani', day: 1 },
+  { empNo: 'GM019', name: 'Ayushi Patel', day: 1 },
+  { empNo: 'GM014', name: 'Nishtha Ramani', day: 1 },
+  { empNo: 'GM003', name: 'Ajay Rana', day: 1 },
+  { empNo: 'GM021', name: 'Sonal Panchal', day: 0.5 },
+];
+
 export default function Dashboard() {
   return (
     <>
@@ -551,6 +559,34 @@ export default function Dashboard() {
                     <td><strong>{ctcByLocationData.reduce((s, r) => s + r.employees, 0)}</strong></td>
                   </tr>
                 </tfoot>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        {/* Row 5: Top 5 Leave Taker Table */}
+        <div className="gm-charts-grid">
+          <div className="gm-chart-card">
+            <h3 className="gm-chart-title">Top 5 Leave Taker for CLSL</h3>
+            <p className="gm-chart-subtitle">01 Jul 2026 to 31 Aug 2026</p>
+            <div className="gm-ctc-table-wrap">
+              <table className="gm-leave-table">
+                <thead>
+                  <tr>
+                    <th>Emp No.</th>
+                    <th>Name</th>
+                    <th>Day</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {leaveTakerData.map((row, i) => (
+                    <tr key={i}>
+                      <td>{row.empNo}</td>
+                      <td>{row.name}</td>
+                      <td>{row.day}</td>
+                    </tr>
+                  ))}
+                </tbody>
               </table>
             </div>
           </div>
