@@ -20,7 +20,7 @@ const LoginPage = () => {
     // Hardcoded check for HR Admin
     if (email === 'krushant@growmor.co.in' && password === 'GrowMore@2026') {
       console.log("Login successful! Redirecting...");
-      navigate('/dashboard');
+      navigate('/home');
     } else {
       setError('Invalid email or password');
     }

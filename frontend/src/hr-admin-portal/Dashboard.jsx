@@ -1,6 +1,277 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import './Dashboard.css';
+
+// ─── Pure SVG Line Chart (no dependencies) ──────────────────────
+function SvgLineChart({ data, xKey, lines, xLabel, yLabel, height = 220 }) {
+  const containerRef = useRef(null);
+  const [width, setWidth] = useState(500);
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(() => setWidth(el.clientWidth));
+    ro.observe(el);
+    setWidth(el.clientWidth);
+    return () => ro.disconnect();
+  }, []);
+
+  const pad = { top: 24, right: 36, bottom: 44, left: 52 };
+  const W = width - pad.left - pad.right;
+  const H = height - pad.top - pad.bottom;
+  const allVals = lines.flatMap(l => data.map(d => d[l.key]));
+  const maxVal = Math.max(...allVals, 1);
+  const gridLines = 5;
+  const xStep = data.length > 1 ? W / (data.length - 1) : W;
+
+  const toX = i => pad.left + (data.length > 1 ? i * xStep : W / 2);
+  const toY = v => pad.top + H - (v / maxVal) * H;
+
+  const [tooltip, setTooltip] = useState(null);
+
+  return (
+    <div ref={containerRef} style={{ width: '100%', position: 'relative', userSelect: 'none' }}>
+      <svg width={width} height={height} style={{ display: 'block', overflow: 'visible' }}>
+        {/* Y grid lines + labels */}
+        {Array.from({ length: gridLines + 1 }).map((_, i) => {
+          const val = Math.round((maxVal / gridLines) * (gridLines - i));
+          const y = pad.top + (H / gridLines) * i;
+          return (
+            <g key={i}>
+              <line x1={pad.left} x2={pad.left + W} y1={y} y2={y} stroke="#e5e7eb" strokeDasharray="4 3" />
+              <text x={pad.left - 8} y={y + 4} textAnchor="end" fontSize={11} fill="#9ca3af">{val}</text>
+            </g>
+          );
+        })}
+        {/* Y axis label */}
+        <text transform={`translate(14,${pad.top + H / 2}) rotate(-90)`} textAnchor="middle" fontSize={11} fill="#6b7280">{yLabel}</text>
+        {/* X axis labels */}
+        {data.map((d, i) => (
+          <text key={i} x={toX(i)} y={pad.top + H + 18} textAnchor="middle" fontSize={11} fill="#9ca3af">{d[xKey]}</text>
+        ))}
+        {/* X axis label */}
+        <text x={pad.left + W / 2} y={height - 4} textAnchor="middle" fontSize={11} fill="#6b7280">{xLabel}</text>
+        {/* Lines + dots + value labels */}
+        {lines.map(l => {
+          const pts = data.map((d, i) => `${toX(i)},${toY(d[l.key])}`).join(' ');
+          return (
+            <g key={l.key}>
+              <polyline points={pts} fill="none" stroke={l.color} strokeWidth={2.5} strokeLinejoin="round" strokeLinecap="round" />
+              {data.map((d, i) => (
+                <g key={i}>
+                  <circle cx={toX(i)} cy={toY(d[l.key])} r={5} fill={l.color} stroke="#fff" strokeWidth={2}
+                    style={{ cursor: 'pointer' }}
+                    onMouseEnter={() => setTooltip({ x: toX(i), y: toY(d[l.key]), label: d[xKey], val: d[l.key], name: l.name, color: l.color })}
+                    onMouseLeave={() => setTooltip(null)}
+                  />
+                  {d[l.key] > 0 && (
+                    <text x={toX(i)} y={toY(d[l.key]) - 10} textAnchor="middle" fontSize={11} fontWeight="600" fill="#374151">{d[l.key]}</text>
+                  )}
+                </g>
+              ))}
+            </g>
+          );
+        })}
+        {/* Tooltip */}
+        {tooltip && (
+          <g>
+            <rect x={tooltip.x + 8} y={tooltip.y - 28} width={90} height={28} rx={6} fill="#1f2937" />
+            <text x={tooltip.x + 53} y={tooltip.y - 10} textAnchor="middle" fontSize={11} fill="#fff">
+              {tooltip.name}: {tooltip.val}
+            </text>
+          </g>
+        )}
+      </svg>
+      {/* Legend */}
+      {lines.length > 1 && (
+        <div style={{ display: 'flex', gap: 16, paddingLeft: pad.left, marginTop: 4 }}>
+          {lines.map(l => (
+            <span key={l.key} style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 12, color: '#374151' }}>
+              <span style={{ width: 10, height: 10, borderRadius: '50%', background: l.color, display: 'inline-block' }} />
+              {l.name}
+            </span>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── Pure SVG Horizontal Bar Chart ─────────────────────────────
+function SvgBarChart({ data, labelKey, valueKey, color = '#1c9c6e', height = 240 }) {
+  const containerRef = useRef(null);
+  const [width, setWidth] = useState(500);
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(() => setWidth(el.clientWidth));
+    ro.observe(el);
+    setWidth(el.clientWidth);
+    return () => ro.disconnect();
+  }, []);
+
+  const pad = { top: 16, right: 60, bottom: 32, left: 90 };
+  const W = width - pad.left - pad.right;
+  const H = height - pad.top - pad.bottom;
+  const maxVal = Math.max(...data.map(d => d[valueKey]), 1);
+  const barH = Math.min(24, (H / data.length) - 8);
+  const barGap = H / data.length;
+  const gridCount = 6;
+  const [hovered, setHovered] = useState(null);
+
+  return (
+    <div ref={containerRef} style={{ width: '100%' }}>
+      <svg width={width} height={height} style={{ display: 'block', overflow: 'visible' }}>
+        {Array.from({ length: gridCount + 1 }).map((_, i) => {
+          const x = pad.left + (W / gridCount) * i;
+          const val = Math.round((maxVal / gridCount) * i);
+          return (
+            <g key={i}>
+              <line x1={x} x2={x} y1={pad.top} y2={pad.top + H} stroke="#e5e7eb" strokeDasharray="4 3" />
+              <text x={x} y={pad.top + H + 18} textAnchor="middle" fontSize={11} fill="#9ca3af">{val}</text>
+            </g>
+          );
+        })}
+        {data.map((d, i) => {
+          const barW = Math.max(4, (d[valueKey] / maxVal) * W);
+          const y = pad.top + i * barGap + (barGap - barH) / 2;
+          return (
+            <g key={i}
+              onMouseEnter={() => setHovered(i)}
+              onMouseLeave={() => setHovered(null)}
+              style={{ cursor: 'pointer' }}
+            >
+              <text x={pad.left - 8} y={y + barH / 2 + 4} textAnchor="end" fontSize={11} fill="#6b7280">{d[labelKey]}</text>
+              <rect x={pad.left} y={y} width={barW} height={barH} rx={4}
+                fill={hovered === i ? '#17856a' : color}
+                style={{ transition: 'fill 0.15s' }}
+              />
+              <text x={pad.left + barW + 6} y={y + barH / 2 + 4} fontSize={11} fontWeight="600" fill="#374151">{d[valueKey]}</text>
+            </g>
+          );
+        })}
+      </svg>
+    </div>
+  );
+}
+
+// ─── Pure SVG Pie / Donut Chart ───────────────────────────────
+function SvgPieChart({ data, labelKey, valueKey, height = 240 }) {
+  const total = data.reduce((s, d) => s + d[valueKey], 0);
+  const cx = 130, cy = (height - 48) / 2 + 8, r = Math.min(cx, cy) - 16;
+  let angle = -Math.PI / 2;
+  const [hovered, setHovered] = useState(null);
+
+  const slices = data.map((d, i) => {
+    const frac = total > 0 ? d[valueKey] / total : 0;
+    const sweep = frac * 2 * Math.PI;
+    const x1 = cx + r * Math.cos(angle);
+    const y1 = cy + r * Math.sin(angle);
+    angle += sweep;
+    const x2 = cx + r * Math.cos(angle);
+    const y2 = cy + r * Math.sin(angle);
+    const mid = angle - sweep / 2;
+    const lx = cx + (r * 0.62) * Math.cos(mid);
+    const ly = cy + (r * 0.62) * Math.sin(mid);
+    const large = sweep > Math.PI ? 1 : 0;
+    return { d: `M${cx},${cy} L${x1},${y1} A${r},${r} 0 ${large},1 ${x2},${y2} Z`, lx, ly, frac, val: d[valueKey], label: d[labelKey], color: d.color };
+  });
+
+  const W = 320;
+  return (
+    <div style={{ width: '100%', display: 'flex', alignItems: 'flex-start', gap: 16, flexWrap: 'wrap' }}>
+      <svg width={W} height={height} style={{ display: 'block', flexShrink: 0 }}>
+        {slices.map((s, i) => (
+          <g key={i}
+            onMouseEnter={() => setHovered(i)}
+            onMouseLeave={() => setHovered(null)}
+            style={{ cursor: 'pointer' }}
+          >
+            <path d={s.d}
+              fill={s.color}
+              opacity={hovered === i ? 0.8 : 1}
+              stroke="#fff" strokeWidth={2}
+              style={{ transition: 'opacity 0.15s', transform: hovered === i ? `scale(1.04)` : 'scale(1)', transformOrigin: `${cx}px ${cy}px` }}
+            />
+            {s.val > 0 && (
+              <text x={s.lx} y={s.ly} textAnchor="middle" dominantBaseline="middle" fontSize={13} fontWeight="700" fill="#fff">{s.val}</text>
+            )}
+          </g>
+        ))}
+      </svg>
+      {/* Legend */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8, paddingTop: 12 }}>
+        {data.map((d, i) => (
+          <span key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, color: '#374151' }}>
+            <span style={{ width: 14, height: 14, borderRadius: 3, background: d.color, display: 'inline-block', flexShrink: 0 }} />
+            {d[labelKey]}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ─── Pure SVG Vertical Bar Chart ───────────────────────────────
+function SvgVBarChart({ data, xKey, valueKey, color = '#1c9c6e', height = 240 }) {
+  const containerRef = useRef(null);
+  const [width, setWidth] = useState(500);
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(() => setWidth(el.clientWidth));
+    ro.observe(el);
+    setWidth(el.clientWidth);
+    return () => ro.disconnect();
+  }, []);
+
+  const pad = { top: 32, right: 20, bottom: 40, left: 64 };
+  const W = width - pad.left - pad.right;
+  const H = height - pad.top - pad.bottom;
+  const maxVal = Math.max(...data.map(d => d[valueKey]), 1);
+  const barW = Math.min(48, (W / data.length) - 12);
+  const barSlot = W / data.length;
+  const gridCount = 5;
+  const [hovered, setHovered] = useState(null);
+  const fmt = v => v >= 1000 ? (v / 1000).toFixed(0) + 'k' : String(v);
+
+  return (
+    <div ref={containerRef} style={{ width: '100%' }}>
+      <svg width={width} height={height} style={{ display: 'block', overflow: 'visible' }}>
+        {/* Y grid */}
+        {Array.from({ length: gridCount + 1 }).map((_, i) => {
+          const val = Math.round((maxVal / gridCount) * (gridCount - i));
+          const y = pad.top + (H / gridCount) * i;
+          return (
+            <g key={i}>
+              <line x1={pad.left} x2={pad.left + W} y1={y} y2={y} stroke="#e5e7eb" strokeDasharray="4 3" />
+              <text x={pad.left - 8} y={y + 4} textAnchor="end" fontSize={11} fill="#9ca3af">{fmt(val)}</text>
+            </g>
+          );
+        })}
+        {/* Bars */}
+        {data.map((d, i) => {
+          const bH = (d[valueKey] / maxVal) * H;
+          const x = pad.left + i * barSlot + (barSlot - barW) / 2;
+          const y = pad.top + H - bH;
+          return (
+            <g key={i}
+              onMouseEnter={() => setHovered(i)}
+              onMouseLeave={() => setHovered(null)}
+              style={{ cursor: 'pointer' }}
+            >
+              <rect x={x} y={y} width={barW} height={bH} rx={4}
+                fill={hovered === i ? '#17856a' : color}
+                style={{ transition: 'fill 0.15s' }}
+              />
+              <text x={x + barW / 2} y={y - 6} textAnchor="middle" fontSize={10} fontWeight="600" fill="#374151">{d[valueKey].toLocaleString()}</text>
+              <text x={x + barW / 2} y={pad.top + H + 16} textAnchor="middle" fontSize={11} fill={hovered === i ? '#1c9c6e' : '#9ca3af'}>{d[xKey]}</text>
+            </g>
+          );
+        })}
+      </svg>
+    </div>
+  );
+}
 
 const allItems = [
   // Employee
@@ -94,434 +365,196 @@ const allItems = [
 
 const categories = ['All', 'My Favourites', 'Employee', 'Payroll', 'Leave', 'Other'];
 
-const updates = [
-  { date: '06 Aug 2026', title: 'Multi-Language Support for Employee Profiles in GrowMore' },
-  { date: '31 Jul 2026', title: 'Form 24Q is now Form 138' },
-  { date: '30 Jul 2026', title: "From Tax Filing to AI — HR's Essential Update" },
-  { date: '14 Jul 2026', title: 'Track and Manage Work Hours with Timesheets' },
+// Chart Data
+const yearsInServiceData = [
+  { year: '< 1', employees: 47 },
+  { year: '> 10', employees: 1 },
 ];
 
-function getTimeOfDay() {
-  const hour = new Date().getHours();
-  if (hour >= 5 && hour < 12) return 'morning';
-  if (hour >= 12 && hour < 18) return 'afternoon';
-  return 'evening';
-}
+const additionsAttritionData = [
+  { month: 'Sep', joined: 0, resigned: 0 },
+  { month: 'Oct', joined: 0, resigned: 0 },
+  { month: 'Nov', joined: 0, resigned: 0 },
+  { month: 'Dec', joined: 0, resigned: 0 },
+  { month: 'Jan', joined: 0, resigned: 0 },
+  { month: 'Feb', joined: 10, resigned: 0 },
+  { month: 'Mar', joined: 19, resigned: 0 },
+  { month: 'Apr', joined: 12, resigned: 1 },
+  { month: 'May', joined: 18, resigned: 6 },
+  { month: 'Jun', joined: 18, resigned: 6 },
+  { month: 'Jul', joined: 2, resigned: 4 },
+  { month: 'Aug', joined: 1, resigned: 1 },
+];
 
-const heroImages = {
-  morning: '/images/morning.png',
-  afternoon: '/images/afternoon.png',
-  evening: '/images/evening.png',
-};
+const divisionData = [
+  { division: 'Engineering', count: 56 },
+  { division: 'Sales', count: 34 },
+  { division: 'HR', count: 18 },
+  { division: 'Finance', count: 12 },
+  { division: 'Operations', count: 28 },
+];
 
-const greetings = {
-  morning: 'Good Morning ☀️',
-  afternoon: 'Good Afternoon 🌤️',
-  evening: 'Good Evening 🌙',
-};
+const ageDistributionData = [
+  { age: '< 20', employees: 16 },
+  { age: '20-25', employees: 15 },
+  { age: '25-30', employees: 5 },
+  { age: '30-35', employees: 3 },
+  { age: '35-40', employees: 1 },
+  { age: '> 50', employees: 0 },
+];
 
-function Icon({ name }) {
-  if (name === 'user') {
-    return (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <circle cx="12" cy="8" r="4" />
-        <path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7" />
-      </svg>
-    );
-  }
-  if (name === 'calendar') {
-    return (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-        <line x1="16" y1="2" x2="16" y2="6" />
-        <line x1="8" y1="2" x2="8" y2="6" />
-        <line x1="3" y1="10" x2="21" y2="10" />
-      </svg>
-    );
-  }
-  if (name === 'folder') {
-    return (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
-      </svg>
-    );
-  }
+const salaryRevisionData = [
+  { month: '< 6', employees: 7 },
+  { month: '>30', employees: 0 },
+];
+
+const genderData = [
+  { label: 'Male', value: 27, color: '#1c9c6e' },
+  { label: 'Female', value: 15, color: '#e05c8a' },
+  { label: 'Not Available', value: 0, color: '#3b82f6' },
+];
+
+const ctcMonthlyData = [
+  { month: 'Feb 2026', ctc: 410000 },
+  { month: 'Mar 2026', ctc: 632000 },
+  { month: 'Apr 2026', ctc: 755000 },
+  { month: 'May 2026', ctc: 863500 },
+  { month: 'Jun 2026', ctc: 927500 },
+];
+
+const ctcByLocationData = [
+  { location: 'AHMEDABAD', ctc: 927500, employees: 56 },
+];
+
+export default function Dashboard() {
   return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <ellipse cx="12" cy="6" rx="8" ry="3" />
-      <path d="M4 6v6c0 1.7 3.6 3 8 3s8-1.3 8-3V6" />
-      <path d="M4 12v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6" />
-    </svg>
-  );
-}
-
-function StarIcon({ filled }) {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill={filled ? '#f5a623' : 'none'} stroke="#f5a623" strokeWidth="2">
-      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-    </svg>
-  );
-}
-
-// Add Favourite Modal
-function AddFavouriteModal({ onClose, favouriteLabels, onToggle }) {
-  const [search, setSearch] = useState('');
-  const [activeCategory, setActiveCategory] = useState('My Favourites');
-
-  const filtered = allItems.filter((item) => {
-    const matchesSearch = item.label.toLowerCase().includes(search.toLowerCase());
-    const matchesCategory =
-      activeCategory === 'All' ||
-      (activeCategory === 'My Favourites' ? favouriteLabels.includes(item.label) : item.category === activeCategory);
-    return matchesSearch && matchesCategory;
-  });
-
-  return (
-    <div className="gm-modal-backdrop" onClick={onClose}>
-      <div className="gm-modal" onClick={(e) => e.stopPropagation()}>
-        {/* Header */}
-        <div className="gm-modal-header">
-          <h2>Search</h2>
-          <button className="gm-modal-close" onClick={onClose} aria-label="Close">✕</button>
-        </div>
-
-        {/* Search input */}
-        <div className="gm-modal-search">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2">
-            <circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" />
-          </svg>
-          <input
-            type="text"
-            placeholder="Search here"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            autoFocus
-          />
-        </div>
-
-        {/* Category tabs */}
-        <div className="gm-modal-tabs">
-          {categories.map((cat) => (
-            <button
-              key={cat}
-              className={`gm-modal-tab ${activeCategory === cat ? 'active' : ''}`}
-              onClick={() => setActiveCategory(cat)}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
-
-        {/* Items grid */}
-        <div className="gm-modal-grid">
-          {filtered.map((item) => {
-            const isFav = favouriteLabels.includes(item.label);
-            return (
-              <button
-                key={item.label}
-                className={`gm-modal-card ${isFav ? 'gm-modal-card-fav' : ''}`}
-                onClick={() => onToggle(item)}
-              >
-                <div className="gm-modal-card-top">
-                  <span className="gm-modal-card-icon"><Icon name={item.icon} /></span>
-                  <span className="gm-modal-star"><StarIcon filled={isFav} /></span>
-                </div>
-                <span className="gm-modal-card-label">{item.label}</span>
-              </button>
-            );
-          })}
-          {filtered.length === 0 && (
-            <p className="gm-modal-empty">No items found.</p>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function SettingsModal({ onClose, companyLogo, setCompanyLogo }) {
-  const handleLogoUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (event) => setCompanyLogo(event.target.result);
-      reader.readAsDataURL(file);
-    }
-  };
-
-  return (
-    <div className="gm-modal-backdrop" onClick={onClose}>
-      <div className="gm-modal" style={{ width: 400, height: 'auto', padding: 32, textAlign: 'center' }} onClick={(e) => e.stopPropagation()}>
-        <h2 style={{ marginTop: 0, marginBottom: 24, fontSize: 20 }}>Settings</h2>
-        
-        <div style={{ marginBottom: 24 }}>
-          <h3 style={{ fontSize: 14, color: '#6b7280', marginBottom: 12, textAlign: 'left' }}>White-Labeling</h3>
-          {companyLogo ? (
-             <img src={companyLogo} alt="Preview" style={{ height: 48, marginBottom: 16, objectFit: 'contain' }} />
-          ) : (
-             <div style={{ height: 48, marginBottom: 16, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f3f4f6', borderRadius: 8 }}>
-               <span style={{ color: '#9ca3af', fontSize: 13 }}>No Custom Logo</span>
-             </div>
-          )}
-          <label style={{ display: 'block', padding: '10px 16px', background: '#1c9c6e', color: '#fff', borderRadius: 8, cursor: 'pointer', fontWeight: 600, fontSize: 14 }}>
-            Upload Company Logo
-            <input type="file" style={{ display: 'none' }} accept="image/*" onChange={handleLogoUpload} />
-          </label>
-        </div>
-        
-        {companyLogo && (
-          <button 
-            style={{ width: '100%', padding: '10px', background: '#fee2e2', color: '#dc2626', border: 'none', borderRadius: 8, fontWeight: 600, cursor: 'pointer', fontSize: 14 }}
-            onClick={() => setCompanyLogo(null)}
-          >
-            Remove Logo
-          </button>
-        )}
-      </div>
-    </div>
-  );
-}
-
-function SearchPalette({ onClose }) {
-  // Prevent clicks inside modal from closing it
-  const handleClick = (e) => e.stopPropagation();
-
-  return (
-    <div className="gm-modal-backdrop" onClick={onClose} style={{ alignItems: 'flex-start', paddingTop: '10vh' }}>
-      <div className="gm-search-palette" onClick={handleClick}>
-        <div className="gm-search-palette-header">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2">
-            <circle cx="11" cy="11" r="7" />
-            <path d="M21 21l-4.3-4.3" />
-          </svg>
-          <input type="text" placeholder="Search any command or help and '/' for any data" autoFocus />
-        </div>
-        
-        <div className="gm-search-palette-body">
-          <div className="gm-search-palette-shortcuts">
-            <div className="gm-search-palette-label">
-              Shortcuts 
-              <span className="gm-help-icon">?</span>
-            </div>
-            <div className="gm-search-palette-pills">
-              <button>Pending leaves</button>
-              <button>Pre processing checklist</button>
-              <button>Post processing checklist</button>
-              <button>Employee Info</button>
-            </div>
+    <>
+      {/* Analytics Charts */}
+        <h2 className="gm-bento-heading">Analytics</h2>
+        <div className="gm-charts-grid">
+          {/* Years In Service Distribution */}
+          <div className="gm-chart-card">
+            <h3 className="gm-chart-title">Years In Service Distribution</h3>
+            <SvgLineChart
+              data={yearsInServiceData}
+              xKey="year"
+              lines={[{ key: 'employees', name: 'Employees', color: '#1c9c6e' }]}
+              xLabel="Years"
+              yLabel="Employees"
+              height={240}
+            />
           </div>
-          
-          <div className="gm-search-palette-actions">
-            <div className="gm-search-palette-label" style={{ marginBottom: 8 }}>Quick Actions</div>
-            <div className="gm-search-palette-list">
-              {[
-                { icon: 'bell', title: 'Notifications - Recruitment', path: 'Your Apps > Recruitment > Notifications' },
-                { icon: 'message', title: 'Messages', path: 'Your Apps > Recruitment > Messages' },
-                { icon: 'user', title: 'Employee Portal', path: 'Your Apps > Recruitment > Profile > Employee Portal' },
-                { icon: 'briefcase', title: 'Career Portal', path: 'Your Apps > Recruitment > Profile > Career Page' },
-                { icon: 'download', title: 'Download Center', path: 'System > Download Center' }
-              ].map((item, idx) => (
-                <button key={idx} className="gm-search-action-item">
-                  <div className="gm-search-action-icon">
-                    {item.icon === 'bell' && <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 01-3.4 0"/></svg>}
-                    {item.icon === 'message' && <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>}
-                    {item.icon === 'user' && <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>}
-                    {item.icon === 'briefcase' && <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>}
-                    {item.icon === 'download' && <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>}
-                  </div>
-                  <div className="gm-search-action-text">
-                    <h4>{item.title}</h4>
-                    <p>{item.path}</p>
-                  </div>
-                </button>
-              ))}
+
+          {/* Additions & Attrition */}
+          <div className="gm-chart-card">
+            <h3 className="gm-chart-title">Additions &amp; Attrition</h3>
+            <p className="gm-chart-subtitle">September 2025 to August 2026</p>
+            <SvgLineChart
+              data={additionsAttritionData}
+              xKey="month"
+              lines={[
+                { key: 'joined', name: 'Joined', color: '#1c9c6e' },
+                { key: 'resigned', name: 'Resigned', color: '#ef4444' },
+              ]}
+              xLabel=""
+              yLabel="Employees"
+              height={240}
+            />
+          </div>
+        </div>
+
+        {/* Row 2: Employee Count By Division + Age Distribution */}
+        <div className="gm-charts-grid">
+          <div className="gm-chart-card">
+            <h3 className="gm-chart-title">Employee Count By Division</h3>
+            <SvgBarChart
+              data={divisionData}
+              labelKey="division"
+              valueKey="count"
+              color="#1c9c6e"
+              height={240}
+            />
+          </div>
+          <div className="gm-chart-card">
+            <h3 className="gm-chart-title">Age Distribution</h3>
+            <SvgLineChart
+              data={ageDistributionData}
+              xKey="age"
+              lines={[{ key: 'employees', name: 'Employees', color: '#1c9c6e' }]}
+              xLabel="Age"
+              yLabel="Employees"
+              height={240}
+            />
+          </div>
+        </div>
+
+        {/* Row 3: Salary Revision Frequency + Gender Distribution */}
+        <div className="gm-charts-grid">
+          <div className="gm-chart-card">
+            <h3 className="gm-chart-title">Salary Revision Frequency</h3>
+            <SvgLineChart
+              data={salaryRevisionData}
+              xKey="month"
+              lines={[{ key: 'employees', name: 'Employees', color: '#1c9c6e' }]}
+              xLabel="Month"
+              yLabel="Employees"
+              height={240}
+            />
+          </div>
+          <div className="gm-chart-card">
+            <h3 className="gm-chart-title">Gender Distribution - Current Employees</h3>
+            <SvgPieChart
+              data={genderData}
+              labelKey="label"
+              valueKey="value"
+              height={240}
+            />
+          </div>
+        </div>
+
+        {/* Row 4: Last 5 Months Monthly CTC + CTC By Location Table */}
+        <div className="gm-charts-grid">
+          <div className="gm-chart-card">
+            <h3 className="gm-chart-title">Last 5 Months MONTHLY CTC</h3>
+            <SvgVBarChart
+              data={ctcMonthlyData}
+              xKey="month"
+              valueKey="ctc"
+              color="#1c9c6e"
+              height={240}
+            />
+          </div>
+          <div className="gm-chart-card">
+            <h3 className="gm-chart-title">MONTHLY CTC By Location</h3>
+            <div className="gm-ctc-table-wrap">
+              <table className="gm-ctc-table">
+                <thead>
+                  <tr>
+                    <th>Location</th>
+                    <th>MONTHLY CTC</th>
+                    <th>No of Employees</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {ctcByLocationData.map((row, i) => (
+                    <tr key={i}>
+                      <td>{row.location}</td>
+                      <td>{row.ctc.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+                      <td>{row.employees}</td>
+                    </tr>
+                  ))}
+                </tbody>
+                <tfoot>
+                  <tr className="gm-ctc-total">
+                    <td><strong>Total</strong></td>
+                    <td><strong>{ctcByLocationData.reduce((s, r) => s + r.ctc, 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</strong></td>
+                    <td><strong>{ctcByLocationData.reduce((s, r) => s + r.employees, 0)}</strong></td>
+                  </tr>
+                </tfoot>
+              </table>
             </div>
           </div>
         </div>
-      </div>
-    </div>
-  );
-}
-
-export default function Dashboard({ userName = '' }) {
-  const [tab, setTab] = useState('welcome');
-  const [companyLogo, setCompanyLogo] = useState('/Logos/logo.png');
-  const [showModal, setShowModal] = useState(false);
-  const [showSettingsModal, setShowSettingsModal] = useState(false);
-  const [showSearchModal, setShowSearchModal] = useState(false);
-  const [favourites, setFavourites] = useState([
-    { icon: 'user', label: 'Add Employee' },
-    { icon: 'db', label: 'Update Payroll Data' },
-    { icon: 'db', label: 'Process Payroll' },
-    { icon: 'db', label: 'Salary Statement' },
-  ]);
-
-  const timeOfDay = getTimeOfDay();
-  const greeting = greetings[timeOfDay];
-  const heroImage = heroImages[timeOfDay];
-
-  const favouriteLabels = favourites.map((f) => f.label);
-
-  const handleToggleFavourite = (item) => {
-    setFavourites((prev) => {
-      const exists = prev.find((f) => f.label === item.label);
-      if (exists) return prev.filter((f) => f.label !== item.label);
-      return [...prev, { icon: item.icon, label: item.label }];
-    });
-  };
-
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-        e.preventDefault();
-        setShowSearchModal(true);
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
-
-  return (
-    <div className="gm-dash-screen">
-      {/* Add Favourite Modal */}
-      {showModal && (
-        <AddFavouriteModal
-          onClose={() => setShowModal(false)}
-          favouriteLabels={favouriteLabels}
-          onToggle={handleToggleFavourite}
-        />
-      )}
-
-      {/* Settings Modal */}
-      {showSettingsModal && (
-        <SettingsModal
-          onClose={() => setShowSettingsModal(false)}
-          companyLogo={companyLogo}
-          setCompanyLogo={setCompanyLogo}
-        />
-      )}
-
-      {/* Search Palette Modal */}
-      {showSearchModal && (
-        <SearchPalette onClose={() => setShowSearchModal(false)} />
-      )}
-
-      {/* Top nav */}
-      <header className="gm-dash-nav">
-        <Link to="/dashboard" style={{ textDecoration: 'none' }}>
-          {companyLogo ? (
-            <img src={companyLogo} alt="Company Logo" className="gm-brand-logo-img" />
-          ) : (
-            <div className="gm-brand-mark">
-              <div className="gm-brand-text-stack">
-                <span>GROW</span>
-                <span>MORE</span>
-              </div>
-            </div>
-          )}
-        </Link>
-
-        <div className="gm-nav-search" onClick={() => setShowSearchModal(true)} style={{ cursor: 'pointer' }}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <circle cx="11" cy="11" r="7" />
-            <path d="M21 21l-4.3-4.3" />
-          </svg>
-          <span>Search anything</span>
-          <kbd>CTRL K</kbd>
-        </div>
-
-        <div className="gm-nav-actions">
-          <button className="gm-icon-btn" aria-label="Notifications">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
-              <path d="M13.7 21a2 2 0 01-3.4 0" />
-            </svg>
-          </button>
-          <button className="gm-icon-btn" aria-label="Settings" onClick={() => setShowSettingsModal(true)}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <circle cx="12" cy="12" r="3" />
-              <path d="M19.4 15a1.7 1.7 0 00.3 1.9l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.9-.3 1.7 1.7 0 00-1 1.6V21a2 2 0 11-4 0v-.2a1.7 1.7 0 00-1-1.5 1.7 1.7 0 00-1.9.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.9 1.7 1.7 0 00-1.5-1H3a2 2 0 110-4h.2a1.7 1.7 0 001.5-1 1.7 1.7 0 00-.3-1.9l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.9.3H9a1.7 1.7 0 001-1.5V3a2 2 0 114 0v.2a1.7 1.7 0 001 1.6c.6.3 1.4.2 1.9-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.9V9c.3.6.9 1 1.6 1H21a2 2 0 110 4h-.2a1.7 1.7 0 00-1.6 1z" />
-            </svg>
-          </button>
-          <div className="gm-avatar">A</div>
-        </div>
-      </header>
-
-      <main className="gm-bento">
-        {/* Hero / greeting widget with time-of-day image */}
-        <section className="gm-widget gm-widget-hero" style={{ backgroundImage: `url(${heroImage})` }}>
-          <div className="gm-hero-overlay">
-            <div className="gm-hero-greeting-box">
-              <div className="gm-dash-tabs">
-                <button className={tab === 'welcome' ? 'gm-tab active' : 'gm-tab'} onClick={() => setTab('welcome')}>Welcome</button>
-                <button className={tab === 'dashboard' ? 'gm-tab active' : 'gm-tab'} onClick={() => setTab('dashboard')}>Dashboard</button>
-              </div>
-              <h1>{greeting}{userName ? `, ${userName}.` : '.'}</h1>
-              <p>Let's do great things today.</p>
-            </div>
-            <div className="gm-hero-stats">
-              <div className="gm-hero-stat-block">
-                <span className="gm-hero-stat-num">0</span>
-                <span className="gm-hero-stat-label">Things to review</span>
-              </div>
-              <div className="gm-hero-stat-divider" />
-              <div className="gm-hero-stat-block">
-                <span className="gm-hero-stat-num">3</span>
-                <span className="gm-hero-stat-label">Things to monitor</span>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* My Favourites */}
-        <h2 className="gm-bento-heading">My Favourites</h2>
-        <div className="gm-fav-row">
-          <button className="gm-fav-add-btn" aria-label="Add favourite" onClick={() => setShowModal(true)}>
-            <span className="gm-fav-add-icon">+</span>
-          </button>
-          {favourites.map((f) => (
-            <button key={f.label} className="gm-widget gm-widget-fav gm-tone-green">
-              <span className="gm-fav-icon"><Icon name={f.icon} /></span>
-              <span className="gm-fav-label">{f.label}</span>
-            </button>
-          ))}
-        </div>
-
-        {/* My Tasks */}
-        <h2 className="gm-bento-heading">My Tasks</h2>
-        <section className="gm-widget gm-widget-tasks">
-          <a href="#leave" className="gm-task-row">
-            <div>
-              <h3>Leave</h3>
-              <p>2 tasks pending for others' review.</p>
-            </div>
-            <span className="gm-monitor-btn">Monitor →</span>
-          </a>
-          <a href="#permissions" className="gm-task-row">
-            <div>
-              <h3>Permissions</h3>
-              <p>1 task pending for others' review.</p>
-            </div>
-            <span className="gm-monitor-btn">Monitor →</span>
-          </a>
-        </section>
-
-        {/* Latest Updates */}
-        <section className="gm-widget gm-widget-updates">
-          <div className="gm-updates-head">
-            <h2>Latest Updates</h2>
-            <a href="#all" aria-label="See all updates">See all</a>
-          </div>
-          <div className="gm-updates-list">
-            {updates.map((u) => (
-              <div key={u.title} className="gm-update-item">
-                <span className="gm-update-date">{u.date}</span>
-                <p>{u.title}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-      </main>
-    </div>
+    </>
   );
 }
