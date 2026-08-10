@@ -41,12 +41,79 @@
     flex-shrink: 0;
     transition: background 0.2s, color 0.2s;
 }
-.gm-nav-apps-btn:hover {
+
+.gm-nav-apps-btn:hover, .gm-nav-apps-btn.active {
     background: #f3f4f6;
     color: #374151;
 }
 
-.gm-dash-nav .gm-brand-mark {
+/* Apps Dropdown Menu */
+.gm-apps-dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    width: 280px;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    z-index: 200;
+    overflow: hidden;
+    padding-bottom: 8px;
+}
+
+.gm-apps-dropdown-header {
+    padding: 16px 20px 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #9ca3af;
+}
+
+.gm-apps-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.gm-app-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.gm-app-item:hover {
+    background: #f9fafb;
+}
+
+.gm-app-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    border: 1px solid;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.gm-app-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.gm-app-name {
+    font-size: 14px;
+    color: #374151;
+    font-weight: 500;
+}
+
+.gm-app-sub {
+    font-size: 11px;
+    color: #6b7280;
+    margin-top: 2px;
+}
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -70,24 +137,6 @@
     max-width: 120px;
     object-fit: contain;
     flex-shrink: 0;
-}
-
-/* NEW badge pill */
-.gm-nav-new-badge {
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    padding: 3px 9px;
-    border-radius: 999px;
-    background: #7c3aed;
-    color: #fff;
-    cursor: pointer;
-    border: none;
-    flex-shrink: 0;
-    transition: background 0.2s;
-}
-.gm-nav-new-badge:hover {
-    background: #6d28d9;
 }
 
 /* Search bar */
@@ -178,26 +227,6 @@
     height: 24px;
     background: #e5e7eb;
     margin: 0 4px;
-}
-
-/* Add icon button (circle outline) */
-.gm-nav-add-btn {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    border: 1.5px solid #e5e7eb;
-    background: transparent;
-    color: #6b7280;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: border-color 0.2s, color 0.2s, background 0.2s;
-}
-.gm-nav-add-btn:hover {
-    border-color: #1c9c6e;
-    color: #1c9c6e;
-    background: rgba(28, 156, 110, 0.06);
 }
 
 .gm-avatar {
