@@ -338,11 +338,6 @@ function SearchPalette({ onClose }) {
             </div>
           </div>
         </div>
-        
-        <div className="gm-search-palette-footer">
-          Navigate <kbd>↑</kbd> <kbd>↓</kbd> 
-          <span style={{ marginLeft: 16 }}>To select <kbd>↵</kbd></span>
-        </div>
       </div>
     </div>
   );
