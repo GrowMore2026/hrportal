@@ -4,6 +4,7 @@ import LoginPage from './pages/LoginPage';
 import Dashboard from './hr-admin-portal/Dashboard';
 import WelcomePage from './hr-admin-portal/WelcomePage';
 import HomePage from './hr-admin-portal/HomePage';
+import Employee from './hr-admin-portal/Employee';
 import './App.css';
 
 function App() {
@@ -12,10 +13,11 @@ function App() {
       <Routes>
         <Route path="/" element={<LoginPage />} />
         
-        {/* Home Layout */}
-        <Route path="/home" element={<HomePage />}>
-          <Route index element={<WelcomePage />} />
-          <Route path="dashboard" element={<Dashboard />} />
+        {/* Main Layout with Top Nav */}
+        <Route element={<HomePage />}>
+          <Route path="/home" element={<WelcomePage />} />
+          <Route path="/home/dashboard" element={<Dashboard />} />
+          <Route path="/employee" element={<Employee />} />
         </Route>
 
         {/* Catch-all route to redirect any unknown links to the login page */}

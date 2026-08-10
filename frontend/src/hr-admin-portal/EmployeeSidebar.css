@@ -1,0 +1,236 @@
+/* ─── Employee Page Two-Column Layout ─────────────────── */
+.emp-page-layout {
+    display: flex;
+    width: 100%;
+    min-height: calc(100vh - 52px);
+    background: #ffffff;
+}
+
+/* Sidebar top breadcrumb */
+.emp-sidebar-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 16px 16px 12px;
+    font-size: 13px;
+    border-bottom: 1px solid #f0f0f0;
+    margin-bottom: 4px;
+}
+
+.emp-sidebar-breadcrumb .gm-breadcrumb-link {
+    color: #9ca3af;
+    font-size: 13px;
+}
+
+.emp-sidebar-breadcrumb .gm-breadcrumb-separator {
+    color: #d1d5db;
+    font-size: 12px;
+}
+
+.emp-sidebar-breadcrumb .gm-breadcrumb-current {
+    color: #374151;
+    font-weight: 500;
+    font-size: 13px;
+}
+
+/* ─── Sidebar ──────────────────────────────────────────── */
+.emp-sidebar {
+    width: 240px;
+    min-width: 240px;
+    max-width: 240px;
+    background: #ffffff;
+    border-right: 1px solid #e8eaed;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 24px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    position: sticky;
+    top: 0;
+    height: calc(100vh - 52px);
+    flex-shrink: 0;
+}
+
+/* Logo */
+.emp-sidebar-logo {
+    padding: 24px 20px 16px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.emp-logo-img {
+    height: 44px;
+    max-width: 120px;
+    object-fit: contain;
+}
+
+/* Profile section */
+.emp-sidebar-profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 16px 12px;
+    border-bottom: 1px solid #f0f0f0;
+    margin-bottom: 8px;
+}
+
+.emp-avatar-circle {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #e8eaed;
+    color: #6b7280;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.emp-profile-info {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+}
+
+.emp-profile-name {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #1f2937;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.emp-profile-link {
+    font-size: 12px;
+    color: #1c9c6e;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.emp-profile-link:hover {
+    color: #157a56;
+    text-decoration: underline;
+}
+
+.emp-profile-settings {
+    width: 28px;
+    height: 28px;
+    border: none;
+    background: transparent;
+    color: #9ca3af;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background 0.2s, color 0.2s;
+}
+
+.emp-profile-settings:hover {
+    background: #f3f4f6;
+    color: #374151;
+}
+
+/* Navigation */
+.emp-sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    padding: 4px 8px;
+    gap: 4px;
+}
+
+.emp-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.15s;
+    user-select: none;
+    background: transparent;
+}
+
+.emp-nav-item:hover {
+    background: #e6f4ef;
+}
+
+.emp-nav-item.active {
+    background: #e6f4ef;
+}
+
+.emp-nav-item.active .emp-nav-label {
+    color: #1c9c6e;
+    font-weight: 600;
+}
+
+.emp-nav-item--bold .emp-nav-label {
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.emp-nav-icon {
+    color: #6b7280;
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.emp-nav-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #374151;
+    flex: 1;
+}
+
+.emp-nav-chevron {
+    color: #9ca3af;
+    display: flex;
+    align-items: center;
+    transition: transform 0.2s;
+}
+
+.emp-nav-chevron.open {
+    transform: rotate(180deg);
+}
+
+.emp-sub-empty {
+    font-size: 12px;
+    color: #9ca3af;
+    padding: 4px 12px 6px 44px;
+    font-style: italic;
+}
+
+.emp-sub-menu {
+    display: flex;
+    flex-direction: column;
+    background: #ffffff;
+    border-left: 2px solid #e5e7eb;
+    margin: 0 12px 4px 16px;
+    border-radius: 0 0 6px 6px;
+}
+
+.emp-sub-item {
+    font-size: 13.5px;
+    color: #6b7280;
+    padding: 9px 14px;
+    cursor: pointer;
+    transition: color 0.15s, background 0.15s;
+    border-radius: 4px;
+}
+
+.emp-sub-item:hover {
+    color: #1c9c6e;
+    background: #f0faf6;
+}
+
+/* ─── Main Content Area ──────────────────────────────────── */
+.emp-main-content {
+    flex: 1;
+    padding: 28px 36px;
+    min-width: 0;
+    background: #ffffff;
+    overflow-y: auto;
+}

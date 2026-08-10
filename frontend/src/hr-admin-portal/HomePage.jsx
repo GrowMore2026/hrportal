@@ -301,7 +301,7 @@ export default function HomePage({ userName = '' }) {
                   <div className="gm-app-name">Homepage</div>
                 </div>
 
-                <div className="gm-app-item">
+                <div className="gm-app-item" onClick={() => { navigate('/employee'); setShowAppsMenu(false); }}>
                   <div className="gm-app-icon" style={{ color: '#1c9c6e', borderColor: '#e6f4ef' }}>
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
                   </div>
@@ -406,41 +406,43 @@ export default function HomePage({ userName = '' }) {
         </div>
       </header>
 
-      <main className="gm-bento">
-        {/* Hero Banner */}
-        <section className="gm-widget gm-widget-hero" style={{ backgroundImage: `url(${heroImage})` }}>
-          <div className="gm-hero-overlay">
-            <div className="gm-hero-greeting-box">
-              <div className="gm-dash-tabs">
-                <button 
-                  className={`gm-tab ${!isDashboard ? 'active' : ''}`} 
-                  onClick={() => navigate('/home')}
-                >
-                  Welcome
-                </button>
-                <button 
-                  className={`gm-tab ${isDashboard ? 'active' : ''}`} 
-                  onClick={() => navigate('/home/dashboard')}
-                >
-                  Dashboard
-                </button>
+      <main className="gm-bento" style={!location.pathname.startsWith('/home') ? { padding: 0, background: '#fff', display: 'block' } : {}}>
+        {/* Hero Banner (Only shown on /home routes) */}
+        {location.pathname.startsWith('/home') && (
+          <section className="gm-widget gm-widget-hero" style={{ backgroundImage: `url(${heroImage})` }}>
+            <div className="gm-hero-overlay">
+              <div className="gm-hero-greeting-box">
+                <div className="gm-dash-tabs">
+                  <button 
+                    className={`gm-tab ${!isDashboard ? 'active' : ''}`} 
+                    onClick={() => navigate('/home')}
+                  >
+                    Welcome
+                  </button>
+                  <button 
+                    className={`gm-tab ${isDashboard ? 'active' : ''}`} 
+                    onClick={() => navigate('/home/dashboard')}
+                  >
+                    Dashboard
+                  </button>
+                </div>
+                <h1>{greeting}{userName ? `, ${userName}.` : '.'}</h1>
+                <p>Let's do great things today.</p>
               </div>
-              <h1>{greeting}{userName ? `, ${userName}.` : '.'}</h1>
-              <p>Let's do great things today.</p>
+              <div className="gm-hero-stats">
+                <div className="gm-hero-stat-block">
+                  <span className="gm-hero-stat-num">0</span>
+                  <span className="gm-hero-stat-label">Things to review</span>
+                </div>
+                <div className="gm-hero-stat-divider" />
+                <div className="gm-hero-stat-block">
+                  <span className="gm-hero-stat-num">3</span>
+                  <span className="gm-hero-stat-label">Things to monitor</span>
+                </div>
+              </div>
             </div>
-            <div className="gm-hero-stats">
-              <div className="gm-hero-stat-block">
-                <span className="gm-hero-stat-num">0</span>
-                <span className="gm-hero-stat-label">Things to review</span>
-              </div>
-              <div className="gm-hero-stat-divider" />
-              <div className="gm-hero-stat-block">
-                <span className="gm-hero-stat-num">3</span>
-                <span className="gm-hero-stat-label">Things to monitor</span>
-              </div>
-            </div>
-          </div>
-        </section>
+          </section>
+        )}
 
         {/* Outlet for Welcome / Dashboard Content */}
         <Outlet context={{ favourites, setShowModal }} />

@@ -1228,3 +1228,33 @@
 .gm-leave-table tbody tr:hover {
     background: #f9fafb;
 }
+
+/* ─── Breadcrumbs (Slug) ───────────────────────── */
+.gm-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 16px;
+    font-family: 'Inter', sans-serif;
+    margin-bottom: 24px;
+}
+
+.gm-breadcrumb-link {
+    color: #9ca3af;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.gm-breadcrumb-link:hover {
+    color: #1c9c6e;
+}
+
+.gm-breadcrumb-separator {
+    color: #9ca3af;
+    font-size: 14px;
+}
+
+.gm-breadcrumb-current {
+    color: #374151;
+    font-weight: 500;
+}
