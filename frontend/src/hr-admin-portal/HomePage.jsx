@@ -263,7 +263,18 @@ export default function HomePage({ userName = '' }) {
 
       {/* Top Nav */}
       <header className="gm-dash-nav">
-        <Link to="/home" style={{ textDecoration: 'none' }}>
+
+        {/* App switcher grid dots */}
+        <button className="gm-nav-apps-btn" aria-label="Apps">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+            <circle cx="2" cy="2" r="1.5"/><circle cx="8" cy="2" r="1.5"/><circle cx="14" cy="2" r="1.5"/>
+            <circle cx="2" cy="8" r="1.5"/><circle cx="8" cy="8" r="1.5"/><circle cx="14" cy="8" r="1.5"/>
+            <circle cx="2" cy="14" r="1.5"/><circle cx="8" cy="14" r="1.5"/><circle cx="14" cy="14" r="1.5"/>
+          </svg>
+        </button>
+
+        {/* Logo */}
+        <Link to="/home" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
           {companyLogo ? (
             <img src={companyLogo} alt="Company Logo" className="gm-brand-logo-img" />
           ) : (
@@ -273,28 +284,53 @@ export default function HomePage({ userName = '' }) {
           )}
         </Link>
 
+        {/* NEW badge */}
+        <button className="gm-nav-new-badge" aria-label="What's new">NEW</button>
+
+        {/* Search bar */}
         <div className="gm-nav-search" onClick={() => setShowSearchModal(true)} style={{ cursor: 'pointer' }}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" />
           </svg>
-          <span>Search anything</span>
-          <kbd>CTRL K</kbd>
+          <span>Search Anything</span>
+          <kbd>Ctrl + K</kbd>
         </div>
 
+        {/* Right side actions */}
         <div className="gm-nav-actions">
-          <button className="gm-icon-btn" aria-label="Notifications">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
-              <path d="M13.7 21a2 2 0 01-3.4 0" />
+
+          {/* Add / Plus circle */}
+          <button className="gm-nav-add-btn" aria-label="Quick add">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <circle cx="12" cy="12" r="9" />
+              <line x1="12" y1="8" x2="12" y2="16" />
+              <line x1="8" y1="12" x2="16" y2="12" />
             </svg>
           </button>
-          <button className="gm-icon-btn" aria-label="Settings" onClick={() => setShowSettingsModal(true)}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+
+          {/* Settings gear + chevron */}
+          <button className="gm-nav-settings-btn" aria-label="Settings" onClick={() => setShowSettingsModal(true)}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <circle cx="12" cy="12" r="3" />
               <path d="M19.4 15a1.7 1.7 0 00.3 1.9l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.9-.3 1.7 1.7 0 00-1 1.6V21a2 2 0 11-4 0v-.2a1.7 1.7 0 00-1-1.5 1.7 1.7 0 00-1.9.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.9 1.7 1.7 0 00-1.5-1H3a2 2 0 110-4h.2a1.7 1.7 0 001.5-1 1.7 1.7 0 00-.3-1.9l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.9.3H9a1.7 1.7 0 001-1.5V3a2 2 0 114 0v.2a1.7 1.7 0 001 1.6c.6.3 1.4.2 1.9-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.9V9c.3.6.9 1 1.6 1H21a2 2 0 110 4h-.2a1.7 1.7 0 00-1.6 1z" />
             </svg>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
           </button>
-          <div className="gm-avatar">A</div>
+
+          {/* Divider */}
+          <div className="gm-nav-divider" />
+
+          {/* Power / logout */}
+          <button className="gm-icon-btn" aria-label="Logout">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+              <polyline points="16 17 21 12 16 7" />
+              <line x1="21" y1="12" x2="9" y2="12" />
+            </svg>
+          </button>
+
         </div>
       </header>
 
