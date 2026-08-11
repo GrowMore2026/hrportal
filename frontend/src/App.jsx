@@ -6,6 +6,7 @@ import WelcomePage from './hr-admin-portal/HomePage/WelcomePage';
 import HomePage from './hr-admin-portal/HomePage/HomePage';
 import Employee from './hr-admin-portal/Employee/Employee';
 import Payroll from './hr-admin-portal/Payroll/Payroll';
+import WorkforceManagement from './hr-admin-portal/Workforce-Management/WorkforceManagement';
 import './App.css';
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
           <Route path="/home/dashboard" element={<Dashboard />} />
           <Route path="/employee" element={<Employee />} />
           <Route path="/payroll" element={<Payroll />} />
+          <Route path="/workforce-management" element={<WorkforceManagement />} />
         </Route>
 
         {/* Catch-all route to redirect any unknown links to the login page */}
