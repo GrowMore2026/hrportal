@@ -1,10 +1,10 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
-import Dashboard from './hr-admin-portal/Dashboard';
-import WelcomePage from './hr-admin-portal/WelcomePage';
-import HomePage from './hr-admin-portal/HomePage';
-import Employee from './hr-admin-portal/Employee';
+import Dashboard from './hr-admin-portal/HomePage/Dashboard';
+import WelcomePage from './hr-admin-portal/HomePage/WelcomePage';
+import HomePage from './hr-admin-portal/HomePage/HomePage';
+import Employee from './hr-admin-portal/Employee/Employee';
 import './App.css';
 
 function App() {

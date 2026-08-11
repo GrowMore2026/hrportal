@@ -201,6 +201,31 @@ function SearchPalette({ onClose }) {
   );
 }
 
+function LogoutModal({ onClose, onConfirm }) {
+  return (
+    <div className="gm-modal-backdrop" onClick={onClose}>
+      <div className="gm-modal" style={{ width: 400, height: 'auto', padding: '40px 32px', textAlign: 'center', borderRadius: 24 }} onClick={(e) => e.stopPropagation()}>
+        <h2 style={{ marginTop: 0, marginBottom: 24, fontSize: 22, color: '#1f2937', fontFamily: "'Poppins', sans-serif", fontWeight: 700 }}>Confirm Logout</h2>
+        <p style={{ fontSize: 16, color: '#6b7280', marginBottom: 32, fontFamily: "'Poppins', sans-serif" }}>Are you sure you want to log out?</p>
+        <div style={{ display: 'flex', gap: 16 }}>
+          <button 
+            style={{ flex: 1, padding: '12px 0', border: '1px solid #d1d5db', background: '#fff', borderRadius: 8, color: '#374151', fontWeight: 600, fontSize: 15, cursor: 'pointer', fontFamily: "'Poppins', sans-serif" }}
+            onClick={onClose}
+          >
+            Cancel
+          </button>
+          <button 
+            style={{ flex: 1, padding: '12px 0', border: 'none', background: '#ef4444', borderRadius: 8, color: '#fff', fontWeight: 600, fontSize: 15, cursor: 'pointer', fontFamily: "'Poppins', sans-serif" }}
+            onClick={onConfirm}
+          >
+            Logout
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function HomePage({ userName = '' }) {
   const navigate = useNavigate();
   const location = useLocation();
@@ -208,6 +233,7 @@ export default function HomePage({ userName = '' }) {
   const [showModal, setShowModal] = useState(false);
   const [showSearchModal, setShowSearchModal] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [showAppsMenu, setShowAppsMenu] = useState(false);
   const appsMenuRef = useRef(null);
   
@@ -395,7 +421,7 @@ export default function HomePage({ userName = '' }) {
           <div className="gm-nav-divider" />
 
           {/* Power / logout */}
-          <button className="gm-icon-btn" aria-label="Logout">
+          <button className="gm-icon-btn" aria-label="Logout" onClick={() => setShowLogoutModal(true)}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
               <polyline points="16 17 21 12 16 7" />
@@ -447,6 +473,12 @@ export default function HomePage({ userName = '' }) {
         {/* Outlet for Welcome / Dashboard Content */}
         <Outlet context={{ favourites, setShowModal }} />
       </main>
+
+      {/* Modals */}
+      {showModal && <AddFavouriteModal onClose={() => setShowModal(false)} favouriteLabels={favouriteLabels} onToggle={handleToggleFavourite} />}
+      {showSettingsModal && <SettingsModal onClose={() => setShowSettingsModal(false)} companyLogo={companyLogo} setCompanyLogo={setCompanyLogo} />}
+      {showSearchModal && <SearchPalette onClose={() => setShowSearchModal(false)} />}
+      {showLogoutModal && <LogoutModal onClose={() => setShowLogoutModal(false)} onConfirm={() => navigate('/')} />}
     </div>
   );
 }

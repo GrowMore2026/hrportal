@@ -1,0 +1,508 @@
+/* ─── Employee Page Two-Column Layout ─────────────────── */
+.emp-page-layout {
+    display: flex;
+    width: 100%;
+    min-height: calc(100vh - 52px);
+    background: #ffffff;
+}
+
+/* Sidebar top breadcrumb */
+.emp-sidebar-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 16px 16px 12px;
+    font-size: 13px;
+    border-bottom: 1px solid #f0f0f0;
+    margin-bottom: 4px;
+    position: sticky;
+    top: 0;
+    background: #ffffff;
+    z-index: 10;
+}
+
+.emp-sidebar-breadcrumb .gm-breadcrumb-link {
+    color: #9ca3af;
+    font-size: 13px;
+}
+
+.emp-sidebar-breadcrumb .gm-breadcrumb-separator {
+    color: #d1d5db;
+    font-size: 12px;
+}
+
+.emp-sidebar-breadcrumb .gm-breadcrumb-current {
+    color: #374151;
+    font-weight: 500;
+    font-size: 13px;
+}
+
+/* ─── Sidebar ──────────────────────────────────────────── */
+.emp-sidebar {
+    width: 240px;
+    min-width: 240px;
+    max-width: 240px;
+    background: #ffffff;
+    border-right: 1px solid #e8eaed;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 24px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    position: sticky;
+    top: 52px;
+    height: calc(100vh - 52px);
+    flex-shrink: 0;
+}
+
+/* Custom green scrollbar for sidebar */
+.emp-sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+.emp-sidebar::-webkit-scrollbar-track {
+    background: transparent;
+}
+.emp-sidebar::-webkit-scrollbar-thumb {
+    background-color: #1c9c6e;
+    border-radius: 10px;
+}
+
+/* Logo */
+.emp-sidebar-logo {
+    padding: 24px 20px 16px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.emp-logo-img {
+    height: 44px;
+    max-width: 120px;
+    object-fit: contain;
+}
+
+/* Profile section */
+.emp-sidebar-profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 16px 12px;
+    border-bottom: 1px solid #f0f0f0;
+    margin-bottom: 8px;
+}
+
+.emp-avatar-circle {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #e8eaed;
+    color: #6b7280;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.emp-profile-info {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+}
+
+.emp-profile-name {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #1f2937;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.emp-profile-link {
+    font-size: 12px;
+    color: #1c9c6e;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.emp-profile-link:hover {
+    color: #157a56;
+    text-decoration: underline;
+}
+
+.emp-profile-settings {
+    width: 28px;
+    height: 28px;
+    border: none;
+    background: transparent;
+    color: #9ca3af;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background 0.2s, color 0.2s;
+}
+
+.emp-profile-settings:hover {
+    background: #f3f4f6;
+    color: #374151;
+}
+
+/* Navigation */
+.emp-sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    padding: 4px 8px;
+    gap: 4px;
+}
+
+.emp-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.15s;
+    user-select: none;
+    background: transparent;
+}
+
+.emp-nav-item:hover {
+    background: #e6f4ef;
+}
+
+.emp-nav-item.active {
+    background: #e6f4ef;
+}
+
+.emp-nav-item.active .emp-nav-label {
+    color: #1c9c6e;
+    font-weight: 600;
+}
+
+.emp-nav-item--bold .emp-nav-label {
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.emp-nav-icon {
+    color: #6b7280;
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.emp-nav-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #374151;
+    flex: 1;
+}
+
+.emp-nav-chevron {
+    color: #9ca3af;
+    display: flex;
+    align-items: center;
+    transition: transform 0.2s;
+}
+
+.emp-nav-chevron.open {
+    transform: rotate(180deg);
+}
+
+.emp-sub-empty {
+    font-size: 12px;
+    color: #9ca3af;
+    padding: 4px 12px 6px 44px;
+    font-style: italic;
+}
+
+.emp-sub-menu {
+    display: flex;
+    flex-direction: column;
+    background: #ffffff;
+    border-left: 2px solid #e5e7eb;
+    margin: 0 12px 4px 16px;
+    border-radius: 0 0 6px 6px;
+}
+
+.emp-sub-item {
+    font-size: 13.5px;
+    color: #6b7280;
+    padding: 9px 14px;
+    cursor: pointer;
+    transition: color 0.15s, background 0.15s;
+    border-radius: 4px;
+}
+
+.emp-sub-item:hover {
+    color: #1c9c6e;
+    background: #f0faf6;
+}
+
+/* ─── Main Content Area ──────────────────────────────────── */
+.emp-main-content {
+    flex: 1;
+    padding: 24px 28px;
+    min-width: 0;
+    background: #f8f9fa;
+}
+
+/* ── Dashboard Grid ── */
+.emp-dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.emp-list-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 20px;
+}
+
+.emp-card--span-2 {
+    grid-column: span 2;
+}
+
+.emp-card--span-3 {
+    grid-column: span 3;
+}
+
+.emp-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    padding: 24px 20px 16px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.emp-card:hover {
+    box-shadow: 0 6px 24px rgba(28, 156, 110, 0.12);
+    transform: translateY(-2px);
+}
+
+.emp-card--wide {
+    grid-column: span 2;
+}
+
+.emp-card-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #1c9c6e;
+    margin: 0 0 16px 0;
+    font-family: 'Poppins', sans-serif;
+}
+
+.emp-chart-wrap {
+    margin-top: 8px;
+}
+
+/* ── Stat Numbers ── */
+.emp-stat-number {
+    font-size: 32px;
+    font-weight: 700;
+    color: #1f2937;
+    line-height: 1;
+}
+
+.emp-stat-label {
+    font-size: 13px;
+    color: #6b7280;
+    margin-top: 4px;
+}
+
+.emp-stat-change {
+    font-size: 12px;
+    color: #9ca3af;
+    margin-top: 4px;
+}
+
+.emp-stat-change.green {
+    color: #10b981;
+}
+
+.emp-stat-change.red {
+    color: #ef4444;
+}
+
+.emp-stat-vs {
+    color: #9ca3af;
+}
+
+/* ── Helpdesk Card ── */
+.emp-helpdesk-row {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-top: auto;
+    padding-top: 16px;
+}
+
+.emp-helpdesk-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+}
+
+.emp-helpdesk-val {
+    font-size: 22px;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.emp-helpdesk-lbl {
+    font-size: 11px;
+    color: #9ca3af;
+    margin-top: 2px;
+}
+
+.emp-helpdesk-divider {
+    width: 1px;
+    height: 36px;
+    background: #e5e7eb;
+}
+
+/* ── Donut Chart Card ── */
+.emp-donut-wrap {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: 12px;
+}
+
+.emp-donut-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.emp-donut-bold {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.emp-donut-desc {
+    font-size: 12px;
+    color: #6b7280;
+    line-height: 1.4;
+}
+
+.emp-donut-link {
+    font-size: 13px;
+    font-weight: 500;
+    color: #2563eb;
+    text-decoration: none;
+    margin-top: 4px;
+}
+
+.emp-donut-link:hover {
+    text-decoration: underline;
+}
+
+/* ─── List Cards ─────────────────────────────────────────── */
+.emp-list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.emp-list-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #1c9c6e;
+    font-family: 'Poppins', sans-serif;
+}
+
+.emp-list-action {
+    font-size: 13px;
+    color: #3b82f6;
+    text-decoration: none;
+}
+
+.emp-list-action:hover {
+    text-decoration: underline;
+}
+
+.emp-list-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.emp-list-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.emp-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: #9ca3af;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    margin-right: 12px;
+    flex-shrink: 0;
+}
+
+.emp-avatar img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.emp-item-details {
+    flex: 1;
+    min-width: 0;
+}
+
+.emp-item-name {
+    font-size: 13px;
+    color: #4b5563;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 2px;
+}
+
+.emp-item-id {
+    font-size: 12px;
+    color: #9ca3af;
+}
+
+.emp-item-time {
+    font-size: 12px;
+    color: #9ca3af;
+    white-space: nowrap;
+    margin-left: 8px;
+}
+
+.emp-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 0;
+    color: #9ca3af;
+    font-size: 13px;
+}
+
+.emp-empty-icon {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 12px;
+    opacity: 0.5;
+}

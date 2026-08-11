@@ -155,9 +155,9 @@ function SvgBarChart({ data, labelKey, valueKey, color = '#1c9c6e', height = 240
 }
 
 // ─── Pure SVG Pie / Donut Chart ───────────────────────────────
-function SvgPieChart({ data, labelKey, valueKey, height = 240 }) {
+export function SvgPieChart({ data, labelKey, valueKey, height = 240, chartWidth = 320, cx = 130, radius, legendFontSize = 12 }) {
   const total = data.reduce((s, d) => s + d[valueKey], 0);
-  const cx = 130, cy = (height - 48) / 2 + 8, r = Math.min(cx, cy) - 16;
+  const cy = (height - 48) / 2 + 8, r = radius || Math.min(cx, cy) - 16;
   let angle = -Math.PI / 2;
   const [hovered, setHovered] = useState(null);
 
@@ -176,10 +176,9 @@ function SvgPieChart({ data, labelKey, valueKey, height = 240 }) {
     return { d: `M${cx},${cy} L${x1},${y1} A${r},${r} 0 ${large},1 ${x2},${y2} Z`, lx, ly, frac, val: d[valueKey], label: d[labelKey], color: d.color };
   });
 
-  const W = 320;
   return (
     <div style={{ width: '100%', display: 'flex', alignItems: 'flex-start', gap: 16, flexWrap: 'wrap' }}>
-      <svg width={W} height={height} style={{ display: 'block', flexShrink: 0 }}>
+      <svg width={chartWidth} height={height} style={{ display: 'block', flexShrink: 0 }}>
         {slices.map((s, i) => (
           <g key={i}
             onMouseEnter={() => setHovered(i)}
@@ -201,7 +200,7 @@ function SvgPieChart({ data, labelKey, valueKey, height = 240 }) {
       {/* Legend */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8, paddingTop: 12 }}>
         {data.map((d, i) => (
-          <span key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, color: '#374151' }}>
+          <span key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: legendFontSize, color: '#374151' }}>
             <span style={{ width: 14, height: 14, borderRadius: 3, background: d.color, display: 'inline-block', flexShrink: 0 }} />
             {d[labelKey]}
           </span>
