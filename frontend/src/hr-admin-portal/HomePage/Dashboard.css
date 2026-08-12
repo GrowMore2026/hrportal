@@ -47,26 +47,63 @@
     color: #374151;
 }
 
-/* Apps Dropdown Menu */
+/* Mega Menu Dropdown */
 .gm-apps-dropdown {
     position: absolute;
-    top: calc(100% + 8px);
+    top: calc(100% + 12px);
     left: 0;
-    width: 280px;
-    background: #fff;
+    width: max-content;
+    max-width: calc(100vw - 32px);
+    background-color: #fff;
     border: 1px solid #e5e7eb;
     border-radius: 12px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
     z-index: 200;
-    overflow: hidden;
-    padding-bottom: 8px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
 }
 
 .gm-apps-dropdown-header {
-    padding: 16px 20px 8px;
+    font-size: 18px;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 24px;
+    text-align: left;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+/* Removed close btn styles for dropdown mode */
+
+.gm-apps-columns-container {
+    display: flex;
+    justify-content: flex-start;
+    gap: 20px;
+    flex-wrap: nowrap;
+}
+
+.gm-apps-column {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 180px;
+}
+
+.gm-apps-col-heading {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     font-size: 14px;
     font-weight: 600;
-    color: #9ca3af;
+    color: #1c9c6e;
+    background: #e6f4ef;
+    padding: 8px 12px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    text-transform: capitalize;
 }
 
 .gm-apps-list {
@@ -77,14 +114,28 @@
 .gm-app-item {
     display: flex;
     align-items: center;
-    gap: 16px;
-    padding: 10px 20px;
+    gap: 12px;
+    padding: 10px 12px;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: all 0.2s ease;
+    border-radius: 8px;
+    margin-bottom: 4px;
+    color: #4b5563;
 }
 
 .gm-app-item:hover {
-    background: #f9fafb;
+    background: #f0fdf4; /* brand-green-tint */
+    color: #1c9c6e;
+    transform: translateX(4px);
+}
+
+.gm-app-item svg {
+    color: #9ca3af;
+    transition: color 0.2s;
+}
+
+.gm-app-item:hover svg {
+    color: #1c9c6e;
 }
 
 .gm-app-icon {
@@ -114,6 +165,8 @@
     color: #6b7280;
     margin-top: 2px;
 }
+
+.gm-brand-mark {
     display: inline-flex;
     align-items: center;
     justify-content: center;
