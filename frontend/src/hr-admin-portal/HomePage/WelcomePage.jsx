@@ -1,16 +1,16 @@
-import React from 'react';
-import { useOutletContext } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useOutletContext, useNavigate } from 'react-router-dom';
 import { Icon } from './HomePage';
-
-const updates = [
-  { date: '06 Aug 2026', title: 'Multi-Language Support for Employee Profiles in GrowMore' },
-  { date: '31 Jul 2026', title: 'Form 24Q is now Form 138' },
-  { date: '30 Jul 2026', title: "From Tax Filing to AI — HR's Essential Update" },
-  { date: '25 Jul 2026', title: 'New Leave Policy rolled out across all branches' },
-];
 
 export default function WelcomePage() {
   const { favourites, setShowModal } = useOutletContext();
+  const navigate = useNavigate();
+  const [updates] = useState([
+    { title: 'Leave Application Details have been updated by admin', date: '04-06-2026' },
+    { title: 'Leave Application Details have been updated by admin', date: '04-06-2026' },
+    { title: 'Leave Application Details have been updated by admin', date: '04-06-2026' },
+    { title: 'Leave Application Details have been updated by admin', date: '04-06-2026' }
+  ]);
 
   return (
     <>
@@ -21,7 +21,15 @@ export default function WelcomePage() {
           <span className="gm-fav-add-icon">+</span>
         </button>
         {favourites.map((f) => (
-          <button key={f.label} className="gm-widget gm-widget-fav gm-tone-green">
+          <button 
+            key={f.label} 
+            className="gm-widget gm-widget-fav gm-tone-green"
+            onClick={() => {
+              if (f.label === 'Add Employee') {
+                navigate('/add-employee');
+              }
+            }}
+          >
             <span className="gm-fav-icon"><Icon name={f.icon} /></span>
             <span className="gm-fav-label">{f.label}</span>
           </button>

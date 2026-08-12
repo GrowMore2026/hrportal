@@ -238,7 +238,7 @@ export default function Employee() {
             <div className="emp-card emp-card--span-2">
               <div className="emp-list-header">
                 <div className="emp-list-title">New Joiners for Last 1 Month</div>
-                <Link to="#" className="emp-list-action">Add</Link>
+                <Link to="/add-employee" className="emp-list-action">Add</Link>
               </div>
               {newJoiners.map((emp, idx) => (
                 <div key={idx} className="emp-list-item">

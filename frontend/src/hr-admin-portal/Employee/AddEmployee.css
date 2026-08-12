@@ -1,0 +1,300 @@
+/* ── Add Employee Progress Bar ── */
+.emp-add-page-layout {
+  padding: 32px;
+  background-color: #f9fafb;
+  min-height: 100%;
+}
+
+.emp-add-main-content {
+  width: 100%;
+}
+
+.emp-add-header {
+  margin-bottom: 32px;
+}
+
+.emp-add-progress {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  background: #fff;
+  padding: 32px 48px;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+}
+
+.emp-add-progress::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 60px;
+  right: 60px;
+  height: 3px;
+  background: #f3f4f6;
+  z-index: 1;
+  transform: translateY(-50%);
+}
+
+.emp-progress-step {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  background: #fff;
+  padding: 0 16px;
+}
+
+.emp-step-circle {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #fff;
+  border: 3px solid #e5e7eb;
+  color: #9ca3af;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+
+.emp-progress-step.active .emp-step-circle {
+  border-color: #1c9c6e;
+  background: #1c9c6e;
+  color: #fff;
+  box-shadow: 0 0 0 6px rgba(28, 156, 110, 0.1);
+}
+
+.emp-step-label {
+  font-size: 14px;
+  color: #6b7280;
+  font-weight: 500;
+  text-align: center;
+}
+
+.emp-progress-step.active .emp-step-label {
+  color: #111827;
+  font-weight: 600;
+}
+
+/* ── Add Employee Form Area ── */
+.emp-add-form-container {
+  background: #fff;
+  padding: 40px;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+}
+
+.emp-add-form-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1c9c6e;
+  margin-bottom: 32px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.emp-add-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 64px;
+  row-gap: 24px;
+}
+
+/* ── Form Fields ── */
+.emp-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.emp-form-label {
+  font-size: 14px;
+  color: #374151;
+  font-weight: 600;
+}
+
+.emp-required {
+  color: #ef4444;
+  margin-left: 4px;
+}
+
+.emp-form-input-wrap {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.emp-input, .emp-select {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #111827;
+  font-family: inherit;
+  background-color: #fcfcfc;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.emp-input::placeholder, .emp-select::placeholder {
+  color: #9ca3af;
+}
+
+.emp-input:hover, .emp-select:hover {
+  border-color: #9ca3af;
+}
+
+.emp-input:focus, .emp-select:focus {
+  outline: none;
+  border-color: #1c9c6e;
+  background-color: #fff;
+  box-shadow: 0 0 0 4px rgba(28, 156, 110, 0.1);
+}
+
+.emp-form-hint {
+  font-size: 12px;
+  color: #1c9c6e;
+  margin-top: 6px;
+  display: inline-block;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+/* ── Radio Group ── */
+.emp-radio-group {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 24px;
+  height: 46px; /* Matches input height roughly */
+}
+
+.emp-radio-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #374151;
+  cursor: pointer;
+}
+
+.emp-radio-label input[type="radio"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #1c9c6e;
+  cursor: pointer;
+}
+
+/* ── Checkbox Group ── */
+.emp-checkbox-group {
+  display: flex;
+  align-items: center;
+  gap: 64px; /* Spread out like screenshot */
+}
+
+.emp-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #374151;
+  cursor: pointer;
+}
+
+.emp-checkbox-label input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #1c9c6e;
+  cursor: pointer;
+}
+
+.emp-radio-group-vertical {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ── Inline Inputs ── */
+.emp-inline-input {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-direction: row;
+}
+
+.emp-inline-input .emp-input {
+  flex: 1;
+}
+
+.emp-inline-text {
+  font-size: 14px;
+  color: #4b5563;
+  font-weight: 500;
+}
+
+/* ── Form Actions ── */
+.emp-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  margin-top: 48px;
+  padding-top: 24px;
+  border-top: 1px solid #f3f4f6;
+}
+
+.emp-btn {
+  padding: 12px 32px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 8px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.emp-btn-secondary {
+  background: #fff;
+  border: 1px solid #d1d5db;
+  color: #374151;
+}
+
+.emp-btn-secondary:hover {
+  background: #f9fafb;
+  border-color: #9ca3af;
+}
+
+.emp-btn-primary {
+  background: #1c9c6e;
+  border: 1px solid #1c9c6e;
+  color: #fff;
+  box-shadow: 0 4px 6px rgba(28, 156, 110, 0.15);
+}
+
+.emp-btn-primary:hover {
+  background: #148058;
+  border-color: #148058;
+  box-shadow: 0 6px 8px rgba(28, 156, 110, 0.2);
+}
+
+@media (max-width: 768px) {
+  .emp-add-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Hide Number Spinners ── */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
