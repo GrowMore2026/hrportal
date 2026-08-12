@@ -12,8 +12,86 @@ const EditIcon = () => (
 
 export default function AddEmployee() {
   const [currentStep, setCurrentStep] = useState(1);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleNext = () => setCurrentStep(prev => Math.min(prev + 1, 4));
+  const [formData, setFormData] = useState({
+    emp_code: '',
+    first_name: '',
+    dob: '',
+    aadhaar_number: '',
+    gender: '',
+    reporting_manager: '',
+    status: '',
+    doj: '',
+    probation_period: '',
+    confirmation_date: '',
+    email: '',
+    mobile: '',
+    emergency_contact_name: '',
+    emergency_contact_number: '',
+    father_name: '',
+    spouse_name: '',
+    division: '',
+    cost_center: '',
+    grade: '',
+    designation: '',
+    location: '',
+    department: '',
+    shift: '',
+    pan_number: '',
+    include_pf: true,
+    include_esi: false,
+    include_lwf: false,
+    pf_number: '',
+    uan_number: '',
+    pf_excess_contribution: 'employee_and_employer',
+    payment_type: ''
+  });
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value
+    }));
+  };
+
+  const submitForm = async () => {
+    setIsSubmitting(true);
+    try {
+      const response = await fetch('http://localhost:5000/api/employees', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to create employee');
+      }
+
+      alert('Employee created successfully!');
+      // Reset form on success
+      setCurrentStep(1);
+      setFormData({
+        emp_code: '', first_name: '', dob: '', aadhaar_number: '', gender: '', reporting_manager: '', status: '', doj: '', probation_period: '', confirmation_date: '', email: '', mobile: '', emergency_contact_name: '', emergency_contact_number: '', father_name: '', spouse_name: '', division: '', cost_center: '', grade: '', designation: '', location: '', department: '', shift: '', pan_number: '', include_pf: true, include_esi: false, include_lwf: false, pf_number: '', uan_number: '', pf_excess_contribution: 'employee_and_employer', payment_type: ''
+      });
+    } catch (error) {
+      console.error(error);
+      alert('Error creating employee: ' + error.message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleNext = () => {
+    if (currentStep < 4) {
+      setCurrentStep(prev => prev + 1);
+    } else {
+      submitForm();
+    }
+  };
+
   const handleBack = () => setCurrentStep(prev => Math.max(prev - 1, 1));
 
   return (
@@ -66,28 +144,28 @@ export default function AddEmployee() {
                 <div className="emp-form-group">
                   <label className="emp-form-label">Employee No</label>
                   <div className="emp-form-input-wrap">
-                    <input type="text" className="emp-input" placeholder="e.g. GM001" />
+                    <input type="text" className="emp-input" name="emp_code" value={formData.emp_code} onChange={handleChange} placeholder="e.g. GM001" />
                   </div>
                 </div>
 
                 <div className="emp-form-group">
                   <label className="emp-form-label">Name</label>
                   <div className="emp-form-input-wrap">
-                    <input type="text" className="emp-input" placeholder="Full Name" />
+                    <input type="text" className="emp-input" name="first_name" value={formData.first_name} onChange={handleChange} placeholder="Full Name" />
                   </div>
                 </div>
 
                 <div className="emp-form-group">
                   <label className="emp-form-label">Date Of Birth</label>
                   <div className="emp-form-input-wrap">
-                    <input type="date" className="emp-input" />
+                    <input type="date" className="emp-input" name="dob" value={formData.dob} onChange={handleChange} />
                   </div>
                 </div>
 
                 <div className="emp-form-group">
                   <label className="emp-form-label">Aadhaar Number</label>
                   <div className="emp-form-input-wrap">
-                    <input type="text" className="emp-input" placeholder="12-digit Aadhaar" />
+                    <input type="text" className="emp-input" name="aadhaar_number" value={formData.aadhaar_number} onChange={handleChange} placeholder="12-digit Aadhaar" />
                   </div>
                 </div>
 
@@ -95,13 +173,13 @@ export default function AddEmployee() {
                   <label className="emp-form-label">Gender</label>
                   <div className="emp-form-input-wrap emp-radio-group">
                     <label className="emp-radio-label">
-                      <input type="radio" name="gender" /> Male
+                      <input type="radio" name="gender" value="Male" checked={formData.gender === 'Male'} onChange={handleChange} /> Male
                     </label>
                     <label className="emp-radio-label">
-                      <input type="radio" name="gender" /> Female
+                      <input type="radio" name="gender" value="Female" checked={formData.gender === 'Female'} onChange={handleChange} /> Female
                     </label>
                     <label className="emp-radio-label">
-                      <input type="radio" name="gender" /> Others
+                      <input type="radio" name="gender" value="Others" checked={formData.gender === 'Others'} onChange={handleChange} /> Others
                     </label>
                   </div>
                 </div>
@@ -109,7 +187,7 @@ export default function AddEmployee() {
                 <div className="emp-form-group">
                   <label className="emp-form-label">Reporting Manager</label>
                   <div className="emp-form-input-wrap">
-                    <select className="emp-select">
+                    <select className="emp-select" name="reporting_manager" value={formData.reporting_manager} onChange={handleChange}>
                       <option value="">Select Manager</option>
                       <option value="manager1">Juhi Thakwani [GM008]</option>
                     </select>
@@ -119,7 +197,7 @@ export default function AddEmployee() {
                 <div className="emp-form-group">
                   <label className="emp-form-label">Status</label>
                   <div className="emp-form-input-wrap">
-                    <select className="emp-select">
+                    <select className="emp-select" name="status" value={formData.status} onChange={handleChange}>
                       <option value="">Select Status</option>
                       <option value="probation">Probation</option>
                       <option value="confirmed">Confirmed</option>
@@ -130,7 +208,7 @@ export default function AddEmployee() {
                 <div className="emp-form-group">
                   <label className="emp-form-label">Date Of Joining <span className="emp-required">*</span></label>
                   <div className="emp-form-input-wrap">
-                    <input type="date" className="emp-input" />
+                    <input type="date" className="emp-input" name="doj" value={formData.doj} onChange={handleChange} />
                   </div>
                 </div>
 
@@ -142,7 +220,7 @@ export default function AddEmployee() {
                 <div className="emp-form-group">
                   <label className="emp-form-label">Probation Period</label>
                   <div className="emp-form-input-wrap emp-inline-input">
-                    <input type="number" className="emp-input" placeholder="0" />
+                    <input type="number" className="emp-input" name="probation_period" value={formData.probation_period} onChange={handleChange} placeholder="0" />
                     <span className="emp-inline-text">Days</span>
                   </div>
                 </div>
@@ -150,49 +228,49 @@ export default function AddEmployee() {
                 <div className="emp-form-group">
                   <label className="emp-form-label">Confirmation Date</label>
                   <div className="emp-form-input-wrap">
-                    <input type="date" className="emp-input" />
+                    <input type="date" className="emp-input" name="confirmation_date" value={formData.confirmation_date} onChange={handleChange} />
                   </div>
                 </div>
 
                 <div className="emp-form-group">
                   <label className="emp-form-label">Email</label>
                   <div className="emp-form-input-wrap">
-                    <input type="email" className="emp-input" placeholder="work@company.com" />
+                    <input type="email" className="emp-input" name="email" value={formData.email} onChange={handleChange} placeholder="work@company.com" />
                   </div>
                 </div>
 
                 <div className="emp-form-group">
                   <label className="emp-form-label">Mobile Number</label>
                   <div className="emp-form-input-wrap">
-                    <input type="tel" className="emp-input" placeholder="+91" />
+                    <input type="tel" className="emp-input" name="mobile" value={formData.mobile} onChange={handleChange} placeholder="+91" />
                   </div>
                 </div>
 
                 <div className="emp-form-group">
                   <label className="emp-form-label">Emergency Contact Name</label>
                   <div className="emp-form-input-wrap">
-                    <input type="text" className="emp-input" placeholder="Contact Name" />
+                    <input type="text" className="emp-input" name="emergency_contact_name" value={formData.emergency_contact_name} onChange={handleChange} placeholder="Contact Name" />
                   </div>
                 </div>
 
                 <div className="emp-form-group">
                   <label className="emp-form-label">Emergency Contact Number</label>
                   <div className="emp-form-input-wrap">
-                    <input type="tel" className="emp-input" placeholder="Contact Number" />
+                    <input type="tel" className="emp-input" name="emergency_contact_number" value={formData.emergency_contact_number} onChange={handleChange} placeholder="Contact Number" />
                   </div>
                 </div>
 
                 <div className="emp-form-group">
                   <label className="emp-form-label">Father's name</label>
                   <div className="emp-form-input-wrap">
-                    <input type="text" className="emp-input" placeholder="Father's Name" />
+                    <input type="text" className="emp-input" name="father_name" value={formData.father_name} onChange={handleChange} placeholder="Father's Name" />
                   </div>
                 </div>
 
                 <div className="emp-form-group">
                   <label className="emp-form-label">Spouse Name</label>
                   <div className="emp-form-input-wrap">
-                    <input type="text" className="emp-input" placeholder="Spouse Name" />
+                    <input type="text" className="emp-input" name="spouse_name" value={formData.spouse_name} onChange={handleChange} placeholder="Spouse Name" />
                   </div>
                 </div>
 
@@ -208,8 +286,10 @@ export default function AddEmployee() {
                 <div className="emp-form-group">
                   <label className="emp-form-label">Division</label>
                   <div className="emp-form-input-wrap" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                    <select className="emp-select" style={{ flex: 1 }}>
+                    <select className="emp-select" style={{ flex: 1 }} name="division" value={formData.division} onChange={handleChange}>
                       <option value="">Select Division</option>
+                      <option value="IT">IT</option>
+                      <option value="HR">HR</option>
                     </select>
                     <EditIcon />
                   </div>
@@ -218,8 +298,9 @@ export default function AddEmployee() {
                 <div className="emp-form-group">
                   <label className="emp-form-label">Cost Center</label>
                   <div className="emp-form-input-wrap" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                    <select className="emp-select" style={{ flex: 1 }}>
+                    <select className="emp-select" style={{ flex: 1 }} name="cost_center" value={formData.cost_center} onChange={handleChange}>
                       <option value="">Select Cost Center</option>
+                      <option value="CC001">CC001</option>
                     </select>
                     <EditIcon />
                   </div>
@@ -228,8 +309,9 @@ export default function AddEmployee() {
                 <div className="emp-form-group">
                   <label className="emp-form-label">Grade</label>
                   <div className="emp-form-input-wrap" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                    <select className="emp-select" style={{ flex: 1 }}>
+                    <select className="emp-select" style={{ flex: 1 }} name="grade" value={formData.grade} onChange={handleChange}>
                       <option value="">Select Grade</option>
+                      <option value="A1">A1</option>
                     </select>
                     <EditIcon />
                   </div>
@@ -238,8 +320,9 @@ export default function AddEmployee() {
                 <div className="emp-form-group">
                   <label className="emp-form-label">Designation</label>
                   <div className="emp-form-input-wrap" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                    <select className="emp-select" style={{ flex: 1 }}>
+                    <select className="emp-select" style={{ flex: 1 }} name="designation" value={formData.designation} onChange={handleChange}>
                       <option value="">Select Designation</option>
+                      <option value="Software Engineer">Software Engineer</option>
                     </select>
                     <EditIcon />
                   </div>
@@ -253,8 +336,9 @@ export default function AddEmployee() {
                 <div className="emp-form-group">
                   <label className="emp-form-label">Location</label>
                   <div className="emp-form-input-wrap" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                    <select className="emp-select" style={{ flex: 1 }}>
+                    <select className="emp-select" style={{ flex: 1 }} name="location" value={formData.location} onChange={handleChange}>
                       <option value="">Select Location</option>
+                      <option value="Head Office">Head Office</option>
                     </select>
                     <EditIcon />
                   </div>
@@ -263,8 +347,9 @@ export default function AddEmployee() {
                 <div className="emp-form-group">
                   <label className="emp-form-label">Department</label>
                   <div className="emp-form-input-wrap" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                    <select className="emp-select" style={{ flex: 1 }}>
+                    <select className="emp-select" style={{ flex: 1 }} name="department" value={formData.department} onChange={handleChange}>
                       <option value="">Select Department</option>
+                      <option value="Engineering">Engineering</option>
                     </select>
                     <EditIcon />
                   </div>
@@ -273,8 +358,9 @@ export default function AddEmployee() {
                 <div className="emp-form-group">
                   <label className="emp-form-label">Shifts</label>
                   <div className="emp-form-input-wrap" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                    <select className="emp-select" style={{ flex: 1 }}>
+                    <select className="emp-select" style={{ flex: 1 }} name="shift" value={formData.shift} onChange={handleChange}>
                       <option value="">Select Shifts</option>
+                      <option value="General">General</option>
                     </select>
                     <EditIcon />
                   </div>
@@ -292,20 +378,20 @@ export default function AddEmployee() {
                 <div className="emp-form-group">
                   <label className="emp-form-label">PAN Number</label>
                   <div className="emp-form-input-wrap">
-                    <input type="text" className="emp-input" placeholder="PAN Number" style={{ maxWidth: '400px' }} />
+                    <input type="text" className="emp-input" name="pan_number" value={formData.pan_number} onChange={handleChange} placeholder="PAN Number" style={{ maxWidth: '400px' }} />
                   </div>
                 </div>
 
                 <div className="emp-form-group">
                   <div className="emp-checkbox-group">
                     <label className="emp-checkbox-label">
-                      <input type="checkbox" defaultChecked /> Include PF
+                      <input type="checkbox" name="include_pf" checked={formData.include_pf} onChange={handleChange} /> Include PF
                     </label>
                     <label className="emp-checkbox-label">
-                      <input type="checkbox" /> Include ESI
+                      <input type="checkbox" name="include_esi" checked={formData.include_esi} onChange={handleChange} /> Include ESI
                     </label>
                     <label className="emp-checkbox-label">
-                      <input type="checkbox" /> Include LWF
+                      <input type="checkbox" name="include_lwf" checked={formData.include_lwf} onChange={handleChange} /> Include LWF
                     </label>
                   </div>
                 </div>
@@ -313,7 +399,7 @@ export default function AddEmployee() {
                 <div className="emp-form-group">
                   <label className="emp-form-label">PF Number</label>
                   <div className="emp-form-input-wrap" style={{ maxWidth: '400px' }}>
-                    <input type="text" className="emp-input" placeholder="e.g. HR/FBD/0003256/000/0000125" />
+                    <input type="text" className="emp-input" name="pf_number" value={formData.pf_number} onChange={handleChange} placeholder="e.g. HR/FBD/0003256/000/0000125" />
                     <span className="emp-form-hint" style={{ color: '#9ca3af', fontWeight: 'normal', fontSize: '12px', marginTop: '8px', cursor: 'default' }}>
                       Format : (Region Code/Office Code/Est Code/Extn No/Member Acc No) Example HR/FBD/0003256/000/0000125.
                     </span>
@@ -323,7 +409,7 @@ export default function AddEmployee() {
                 <div className="emp-form-group">
                   <label className="emp-form-label">UAN Number</label>
                   <div className="emp-form-input-wrap">
-                    <input type="text" className="emp-input" placeholder="UAN Number" style={{ maxWidth: '400px' }} />
+                    <input type="text" className="emp-input" name="uan_number" value={formData.uan_number} onChange={handleChange} placeholder="UAN Number" style={{ maxWidth: '400px' }} />
                   </div>
                 </div>
 
@@ -331,10 +417,10 @@ export default function AddEmployee() {
                   <label className="emp-form-label">PF Excess Contribution</label>
                   <div className="emp-form-input-wrap emp-radio-group-vertical">
                     <label className="emp-radio-label">
-                      <input type="radio" name="pf_excess" defaultChecked /> Employee & Employer contribution - 12% with in wage ceiling (Max Rs.1800)
+                      <input type="radio" name="pf_excess_contribution" value="employee_and_employer" checked={formData.pf_excess_contribution === 'employee_and_employer'} onChange={handleChange} /> Employee & Employer contribution - 12% with in wage ceiling (Max Rs.1800)
                     </label>
                     <label className="emp-radio-label">
-                      <input type="radio" name="pf_excess" /> Employee contribution - 12% over and above wage ceiling (In excess to Rs.1800)
+                      <input type="radio" name="pf_excess_contribution" value="employee_only" checked={formData.pf_excess_contribution === 'employee_only'} onChange={handleChange} /> Employee contribution - 12% over and above wage ceiling (In excess to Rs.1800)
                     </label>
                   </div>
                 </div>
@@ -351,7 +437,7 @@ export default function AddEmployee() {
                 <div className="emp-form-group">
                   <label className="emp-form-label">Payment Type</label>
                   <div className="emp-form-input-wrap">
-                    <select className="emp-select" style={{ maxWidth: '400px' }}>
+                    <select className="emp-select" name="payment_type" value={formData.payment_type} onChange={handleChange} style={{ maxWidth: '400px' }}>
                       <option value="">---Select---</option>
                       <option value="bank">Bank Transfer</option>
                       <option value="cash">Cash</option>
@@ -367,11 +453,11 @@ export default function AddEmployee() {
           {/* Form Actions */}
           <div className="emp-form-actions">
             {currentStep > 1 && (
-              <button type="button" className="emp-btn emp-btn-secondary" onClick={handleBack} style={{ marginRight: 'auto' }}>Back</button>
+              <button type="button" className="emp-btn emp-btn-secondary" onClick={handleBack} style={{ marginRight: 'auto' }} disabled={isSubmitting}>Back</button>
             )}
-            <button type="button" className="emp-btn emp-btn-secondary">Cancel</button>
-            <button type="button" className="emp-btn emp-btn-primary" onClick={handleNext}>
-              {currentStep < 4 ? "Next" : "Submit"}
+            <button type="button" className="emp-btn emp-btn-secondary" onClick={() => setCurrentStep(1)} disabled={isSubmitting}>Cancel</button>
+            <button type="button" className="emp-btn emp-btn-primary" onClick={handleNext} disabled={isSubmitting}>
+              {isSubmitting ? "Submitting..." : (currentStep < 4 ? "Next" : "Submit")}
             </button>
           </div>
 
