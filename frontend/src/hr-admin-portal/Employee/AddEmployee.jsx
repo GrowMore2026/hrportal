@@ -13,6 +13,7 @@ const EditIcon = () => (
 export default function AddEmployee() {
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [notification, setNotification] = useState({ show: false, type: '', message: '' });
 
   const [formData, setFormData] = useState({
     emp_code: '',
@@ -70,7 +71,7 @@ export default function AddEmployee() {
         throw new Error(errorData.error || 'Failed to create employee');
       }
 
-      alert('Employee created successfully!');
+      setNotification({ show: true, type: 'success', message: 'Employee created successfully!' });
       // Reset form on success
       setCurrentStep(1);
       setFormData({
@@ -78,7 +79,7 @@ export default function AddEmployee() {
       });
     } catch (error) {
       console.error(error);
-      alert('Error creating employee: ' + error.message);
+      setNotification({ show: true, type: 'error', message: 'Error creating employee: ' + error.message });
     } finally {
       setIsSubmitting(false);
     }
@@ -462,6 +463,31 @@ export default function AddEmployee() {
           </div>
 
         </div>
+
+        {/* Custom Notification Modal */}
+        {notification.show && (
+          <div className="emp-notification-overlay">
+            <div className="emp-notification-modal">
+              <div className={`emp-notification-icon ${notification.type}`}>
+                {notification.type === 'success' ? (
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                ) : (
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
+                )}
+              </div>
+              <h3 className="emp-notification-title">
+                {notification.type === 'success' ? 'Success!' : 'Error!'}
+              </h3>
+              <p className="emp-notification-message">{notification.message}</p>
+              <button 
+                className="emp-btn emp-btn-primary emp-notification-btn"
+                onClick={() => setNotification({ show: false, type: '', message: '' })}
+              >
+                OK
+              </button>
+            </div>
+          </div>
+        )}
       </main>
     </div>
   );
