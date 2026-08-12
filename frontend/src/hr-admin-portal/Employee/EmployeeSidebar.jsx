@@ -34,21 +34,21 @@ export default function EmployeeSidebar() {
 
   // Set active states based on current route
   const isActiveSub = (sub) => {
-    if (sub === 'Employee Profile' && pathname === '/employee-profile') return true;
+    if (sub === 'Employee Profile' && pathname === '/employee/employee-profile') return true;
     if (sub === 'Employee Directory' && pathname === '/employee-search') return true;
     return false;
   };
 
   // Determine which section to expand initially
   const getInitialExpanded = () => {
-    if (pathname === '/employee-profile') return { Information: true };
+    if (pathname === '/employee/employee-profile') return { Information: true };
     if (pathname === '/employee-search') return { Main: true };
     return {};
   };
 
   const [expanded, setExpanded] = useState(getInitialExpanded());
   const [activeItem, setActiveItem] = useState(() => {
-    if (pathname === '/employee-profile') return 'Information';
+    if (pathname === '/employee/employee-profile') return 'Information';
     if (pathname === '/employee-search') return 'Main';
     return 'Employee';
   });
@@ -97,7 +97,7 @@ export default function EmployeeSidebar() {
                     style={{ cursor: 'pointer' }}
                     onClick={() => {
                       if (sub === 'Employee Profile') {
-                        navigate('/employee-profile');
+                        navigate('/employee/employee-profile');
                       } else if (sub === 'Employee Directory') {
                         navigate('/employee-search');
                       }
