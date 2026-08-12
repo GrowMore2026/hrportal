@@ -243,6 +243,12 @@
     background: #f0faf6;
 }
 
+.emp-sub-item.active {
+    color: #1c9c6e;
+    background: #e6f4ef;
+    font-weight: 500;
+}
+
 /* ─── Main Content Area ──────────────────────────────────── */
 .emp-main-content {
     flex: 1;

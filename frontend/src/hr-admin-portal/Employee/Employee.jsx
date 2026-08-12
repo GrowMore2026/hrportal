@@ -5,33 +5,9 @@ import {
   BarChart, Bar, PieChart, Pie, Cell,
 } from 'recharts';
 import { SvgPieChart } from '../HomePage/Dashboard.jsx';
+import EmployeeSidebar from './EmployeeSidebar';
 import '../HomePage/Dashboard.css';
 import './EmployeeSidebar.css';
-
-/* ── Sidebar nav config ── */
-const navItems = [
-  { label: 'Employee' },
-  {
-    label: 'Main',
-    expandable: true,
-    subItems: ['Analytics Hub', 'Employee Directory', 'Organization Chart'],
-  },
-  {
-    label: 'Information',
-    expandable: true,
-    subItems: ['Employee Profile', 'Bank/PF/ESI', 'Family Details', 'Employee Asset Management', 'Position History', 'Previous Employment', 'Separation', 'Access Card Details', 'Employee Documents', 'Employee Documents', 'Employee Contracts', 'Employee Salary'],
-  },
-  {
-    label: 'Admin',
-    expandable: true,
-    subItems: ['Generate Letter', 'Excel Import', 'Bulk Document Upload', 'Bulk Photo Upload', 'Bulletian Borad', 'Mass Communication', 'Identity Verification', 'Contract Details', 'Data Drive'],
-  },
-  {
-    label: 'Setup',
-    expandable: true,
-    subItems: ['Letter Template', 'Company Policies & Forms', 'Employee Segment', 'Employee Filter', 'Org Management'],
-  },
-];
 
 /* ── Chart data ── */
 const headCountData = [
@@ -85,58 +61,10 @@ const resignedEmployees = [
 ];
 
 export default function Employee() {
-  const navigate = useNavigate();
-  const [expanded, setExpanded] = useState({});
-  const [activeItem, setActiveItem] = useState('Employee');
-
-  const toggleExpand = (label) => {
-    setExpanded((prev) => ({ ...prev, [label]: !prev[label] }));
-  };
-
   return (
     <div className="emp-page-layout">
       {/* ── Sidebar ── */}
-      <aside className="emp-sidebar">
-        {/* Breadcrumb inside sidebar */}
-        <div className="emp-sidebar-breadcrumb">
-          <Link to="/home" className="gm-breadcrumb-link">Home</Link>
-          <span className="gm-breadcrumb-separator">&gt;</span>
-          <span className="gm-breadcrumb-current">Employee</span>
-        </div>
-
-        {/* Navigation */}
-        <nav className="emp-sidebar-nav">
-          {navItems.map((item) => (
-            <div key={item.label}>
-              <div
-                className={`emp-nav-item ${activeItem === item.label ? 'active' : ''}`}
-                onClick={() => {
-                  setActiveItem(item.label);
-                  if (item.expandable) toggleExpand(item.label);
-                  else if (item.path) navigate(item.path);
-                }}
-                style={{ cursor: 'pointer' }}
-              >
-                <span className="emp-nav-label">{item.label}</span>
-                {item.expandable && (
-                  <span className={`emp-nav-chevron ${expanded[item.label] ? 'open' : ''}`}>
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                      <polyline points="6 9 12 15 18 9" />
-                    </svg>
-                  </span>
-                )}
-              </div>
-              {item.expandable && expanded[item.label] && (
-                <div className="emp-sub-menu">
-                  {item.subItems.map((sub) => (
-                    <div key={sub} className="emp-sub-item">{sub}</div>
-                  ))}
-                </div>
-              )}
-            </div>
-          ))}
-        </nav>
-      </aside>
+      <EmployeeSidebar />
 
       {/* ── Main Content ── */}
       <main className="emp-main-content">

@@ -90,3 +90,27 @@ exports.createEmployee = async (req, res) => {
     return res.status(500).json({ error: 'Internal server error' });
   }
 };
+
+exports.searchEmployees = async (req, res) => {
+  try {
+    const { query } = req.query;
+    
+    let dbQuery = supabase.from('employees').select('*').limit(10);
+    
+    if (query) {
+      dbQuery = dbQuery.or(`first_name.ilike.%${query}%,last_name.ilike.%${query}%,emp_code.ilike.%${query}%`);
+    }
+
+    const { data, error } = await dbQuery;
+
+    if (error) {
+      console.error('Error searching employees:', error);
+      return res.status(500).json({ error: error.message });
+    }
+
+    return res.status(200).json(data);
+  } catch (err) {
+    console.error('Server error:', err);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+};

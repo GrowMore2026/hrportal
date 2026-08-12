@@ -1,16 +1,17 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import './AddEmployee.css';
+import EmployeeSidebar from './EmployeeSidebar';
+import './EmployeeProfile.css';
 
 // SVG for Edit Icon
 const EditIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: '12px', color: '#6b7280', cursor: 'pointer' }}>
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M12 20h9"></path>
-    <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+    <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
   </svg>
 );
 
-export default function AddEmployee() {
+export default function EmployeeProfile() {
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [notification, setNotification] = useState({ show: false, type: '', message: '' });
@@ -96,9 +97,11 @@ export default function AddEmployee() {
   const handleBack = () => setCurrentStep(prev => Math.max(prev - 1, 1));
 
   return (
-    <div className="emp-add-page-layout">
+    <div className="emp-page-layout">
+      {/* ── Sidebar ── */}
+      <EmployeeSidebar />
       {/* ── Main Content ── */}
-      <main className="emp-add-main-content">
+      <main className="emp-main-content" style={{ padding: '32px' }}>
         
         {/* Progress Header */}
         <div className="emp-add-header">
