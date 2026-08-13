@@ -10,7 +10,7 @@
 
 /* ── Teal Banner ── */
 .emp-detail-banner {
-  background: linear-gradient(135deg, #4fb5b2 0%, #3a9795 100%);
+  background: #1c9c6e;
   border-radius: 12px;
   padding: 24px 32px;
   display: flex;
@@ -100,13 +100,15 @@
 }
 
 .emp-detail-edit-icon {
-  color: #3b82f6;
+  color: #10b981;
   cursor: pointer;
+  transition: all 0.2s ease;
   margin-left: 8px;
 }
 
 .emp-detail-edit-icon:hover {
-  color: #2563eb;
+  transform: scale(1.1);
+  color: #059669;
 }
 
 .emp-detail-grid {

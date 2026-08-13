@@ -8,4 +8,7 @@ router.get('/search', employeeController.searchEmployees);
 // POST /api/employees
 router.post('/', employeeController.createEmployee);
 
+// PUT /api/employees/:id
+router.put('/:id', employeeController.updateEmployee);
+
 module.exports = router;

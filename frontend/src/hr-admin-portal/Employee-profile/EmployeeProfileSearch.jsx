@@ -117,7 +117,7 @@ export default function EmployeeProfileSearch() {
                     <tr 
                       key={emp.id} 
                       onClick={() => setSelectedEmployee({
-                        id: emp.emp_code || 'GM001',
+                        ...emp,
                         name: `${emp.first_name || ''} ${emp.last_name || ''}`.trim() || 'Employee Name',
                         department: emp.department || 'Department',
                         designation: emp.designation || 'Designation',
