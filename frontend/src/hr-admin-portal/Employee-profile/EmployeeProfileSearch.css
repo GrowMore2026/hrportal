@@ -84,26 +84,23 @@
   align-items: center;
   max-width: 420px;
   background: #fff;
-  border: 1px solid #93c5fd; /* Light blue border from screenshot */
-  border-radius: 30px;
-  padding: 6px 16px 6px 6px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 8px 16px 8px 12px;
   transition: all 0.2s ease;
 }
 
 .emp-search-input-wrapper:focus-within {
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  border-color: #1c9c6e;
+  box-shadow: 0 0 0 3px rgba(28, 156, 110, 0.1);
 }
 
 .emp-search-icon-bg {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background: #94a3b8; /* Gray/blue user circle */
-  color: white;
   display: flex;
   align-items: center;
   justify-content: center;
+  color: #9ca3af;
+  margin-right: 8px;
   flex-shrink: 0;
 }
 
@@ -149,15 +146,57 @@
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 }
 
-.emp-search-loading {
-  text-align: center;
+.emp-search-loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 64px;
+  gap: 16px;
+}
+
+.emp-spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid #e5e7eb;
+  border-top-color: #1c9c6e;
+  border-radius: 50%;
+  animation: emp-spin 1s linear infinite;
+}
+
+@keyframes emp-spin {
+  to { transform: rotate(360deg); }
+}
+
+.emp-search-loading-text {
   color: #6b7280;
-  padding: 32px;
-  font-size: 14px;
+  font-size: 15px;
+  font-weight: 500;
 }
 
 .emp-table-wrapper {
   overflow-x: auto;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.emp-table-wrapper::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.emp-table-wrapper::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.emp-table-wrapper::-webkit-scrollbar-thumb {
+  background: #1c9c6e;
+  border-radius: 4px;
+}
+
+.emp-table-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #157a55;
 }
 
 .emp-results-table {
@@ -173,6 +212,9 @@
   color: #6b7280;
   border-bottom: 1px solid #e5e7eb;
   background: #f9fafb;
+  position: sticky;
+  top: 0;
+  z-index: 1;
 }
 
 .emp-results-table td {

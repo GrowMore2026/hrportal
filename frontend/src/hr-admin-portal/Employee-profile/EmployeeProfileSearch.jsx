@@ -4,7 +4,7 @@ import EmployeeSidebar from '../Employee/EmployeeSidebar';
 import EmployeeProfileDetail from './EmployeeProfileDetail';
 import '../Employee/EmployeeSidebar.css';
 import './EmployeeProfileSearch.css';
-import TelescopeGirl from './telescope_girl.png';
+import Papa from 'papaparse';
 
 export default function EmployeeProfileSearch() {
   const navigate = useNavigate();
@@ -40,6 +40,48 @@ export default function EmployeeProfileSearch() {
 
     return () => clearTimeout(timerId);
   }, [query]);
+
+  const handleFileUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setIsLoading(true);
+    Papa.parse(file, {
+      header: true,
+      skipEmptyLines: true,
+      complete: async (results) => {
+        try {
+          const response = await fetch('http://localhost:5000/api/employees/bulk', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ employees: results.data }),
+          });
+
+          if (!response.ok) {
+            const errData = await response.json();
+            throw new Error(errData.error || 'Failed to upload bulk employees');
+          }
+
+          const data = await response.json();
+          alert(`Success: ${data.message}`);
+          // Trigger reload by temporarily resetting query
+          setQuery('');
+          setTimeout(() => setQuery(' '), 100);
+        } catch (error) {
+          console.error(error);
+          alert(`Error uploading CSV: ${error.message}`);
+        } finally {
+          setIsLoading(false);
+          e.target.value = ''; // Reset input
+        }
+      },
+      error: (error) => {
+        console.error('Error parsing CSV:', error);
+        alert(`Error parsing CSV: ${error.message}`);
+        setIsLoading(false);
+      }
+    });
+  };
 
   return (
     <div className="emp-page-layout">
@@ -80,15 +122,22 @@ export default function EmployeeProfileSearch() {
           </div>
         </div>
         
-        <div className="emp-search-right">
-          <img src={TelescopeGirl} alt="Search illustration" className="emp-search-illustration" />
-          <button 
-            className="emp-primary-btn"
-            style={{ marginTop: '16px' }}
-            onClick={() => navigate('/employee/employee-profile/add-employee')}
-          >
-            + Add Employee
-          </button>
+        <div className="emp-search-right" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', justifyContent: 'center', gap: '16px' }}>
+          <div style={{ display: 'flex', gap: '16px' }}>
+            <a href="/example_employees.csv" download="example_employees.csv" title="Download Template" style={{ color: '#1c9c6e', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '8px', cursor: 'pointer', transition: 'opacity 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.opacity = '0.7'} onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M12 18v-6"/><path d="m9 15 3 3 3-3"/></svg>
+            </a>
+            <label title="Upload CSV" style={{ color: '#3b82f6', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '8px', cursor: 'pointer', transition: 'opacity 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.opacity = '0.7'} onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M12 12v6"/><path d="m15 15-3-3-3 3"/></svg>
+              <input type="file" accept=".csv" style={{ display: 'none' }} onChange={handleFileUpload} />
+            </label>
+            <button 
+              className="emp-primary-btn"
+              onClick={() => navigate('/employee/employee-profile/add-employee')}
+            >
+              + Add Employee
+            </button>
+          </div>
         </div>
       </div>
         
@@ -97,7 +146,10 @@ export default function EmployeeProfileSearch() {
         ) : (query || results.length > 0) ? (
           <div className="emp-search-results-container">
         {isLoading ? (
-          <p className="emp-search-loading">Searching...</p>
+          <div className="emp-search-loading-container">
+            <div className="emp-spinner"></div>
+            <p className="emp-search-loading-text">Searching employees...</p>
+          </div>
         ) : (
           <div className="emp-table-wrapper">
             <table className="emp-results-table">

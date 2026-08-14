@@ -50,7 +50,7 @@ exports.searchEmployees = async (req, res) => {
   try {
     const { query } = req.query;
     
-    let dbQuery = supabase.from('employees').select('*').limit(10);
+    let dbQuery = supabase.from('employees').select('*').order('created_at', { ascending: false });
     
     if (query) {
       dbQuery = dbQuery.or(`first_name.ilike.%${query}%,last_name.ilike.%${query}%,emp_code.ilike.%${query}%`);
@@ -64,6 +64,22 @@ exports.searchEmployees = async (req, res) => {
     }
 
     return res.status(200).json(data);
+  } catch (err) {
+    console.error('Server error:', err);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+exports.getAllEmployees = async (req, res) => {
+  try {
+    const { data, error } = await supabase.from('employees').select('*');
+
+    if (error) {
+      console.error('Error fetching all employees:', error);
+      return res.status(500).json({ error: error.message });
+    }
+
+    return res.status(200).json({ employees: data });
   } catch (err) {
     console.error('Server error:', err);
     return res.status(500).json({ error: 'Internal server error' });
@@ -111,6 +127,46 @@ exports.updateEmployee = async (req, res) => {
     });
   } catch (err) {
     console.error('Server error:', err);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+exports.bulkCreateEmployees = async (req, res) => {
+  try {
+    const { employees } = req.body;
+    
+    if (!employees || !Array.isArray(employees) || employees.length === 0) {
+      return res.status(400).json({ error: 'No valid employees array provided' });
+    }
+
+    // Convert empty strings to null for database constraints
+    const cleanedEmployees = employees.map(emp => {
+      let cleaned = { ...emp };
+      for (const key in cleaned) {
+        if (cleaned[key] === '') {
+          cleaned[key] = null;
+        }
+      }
+      return cleaned;
+    });
+
+    const { data, error } = await supabase
+      .from('employees')
+      .upsert(cleanedEmployees, { onConflict: 'emp_code' })
+      .select();
+
+    if (error) {
+      console.error('Error inserting bulk employees:', error);
+      return res.status(500).json({ error: error.message });
+    }
+
+    return res.status(201).json({
+      message: `${data.length} employees created successfully`,
+      employees: data
+    });
+
+  } catch (err) {
+    console.error('Server error in bulkCreateEmployees:', err);
     return res.status(500).json({ error: 'Internal server error' });
   }
 };
