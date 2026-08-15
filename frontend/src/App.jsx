@@ -6,7 +6,7 @@ import WelcomePage from './hr-admin-portal/HomePage/WelcomePage';
 import HomePage from './hr-admin-portal/HomePage/HomePage';
 import Employee from './hr-admin-portal/Employee/Employee';
 import EmployeeProfile from './hr-admin-portal/Employee/EmployeeProfile';
-import EmployeeProfileSearch from './hr-admin-portal/Employee-profile/EmployeeProfileSearch';
+import EmployeeProfileSearch from './hr-admin-portal/Employee/Information/Employee-profile/EmployeeProfileSearch';
 import Payroll from './hr-admin-portal/Payroll/Payroll';
 import WorkforceManagement from './hr-admin-portal/Workforce-Management/WorkforceManagement';
 import './App.css';

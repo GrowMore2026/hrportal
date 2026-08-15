@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import EmployeeSidebar from '../Employee/EmployeeSidebar';
+import EmployeeSidebar from '../../EmployeeSidebar';
 import EmployeeProfileDetail from './EmployeeProfileDetail';
-import '../Employee/EmployeeSidebar.css';
+import '../../EmployeeSidebar.css';
 import './EmployeeProfileSearch.css';
 import Papa from 'papaparse';
 
