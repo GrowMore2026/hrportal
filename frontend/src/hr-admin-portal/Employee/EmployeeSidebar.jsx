@@ -13,7 +13,7 @@ const navItems = [
   {
     label: 'Information',
     expandable: true,
-    subItems: ['Employee Profile', 'Bank/PF/ESI', 'Family Details', 'Employee Asset Management', 'Position History', 'Previous Employment', 'Separation', 'Access Card Details', 'Employee Documents', 'Employee Documents', 'Employee Contracts', 'Employee Salary'],
+    subItems: ['Employee Profile', 'Bank/PF/ESI', 'Family Details', 'Employee Asset Management', 'Position History', 'Previous Employment', 'Separation', 'Access Card Details', 'Employee Documents', 'Employee Contracts', 'Employee Salary'],
   },
   {
     label: 'Admin',
@@ -32,10 +32,10 @@ export default function EmployeeSidebar() {
   const location = useLocation();
   const pathname = location.pathname;
 
-  // Set active states based on current route
   const isActiveSub = (sub) => {
     if (sub === 'Employee Profile' && pathname === '/employee/employee-profile') return true;
     if (sub === 'Employee Directory' && pathname === '/employee-search') return true;
+    if (sub === 'Analytics Hub' && pathname === '/main/analytics-hub') return true;
     return false;
   };
 
@@ -43,6 +43,7 @@ export default function EmployeeSidebar() {
   const getInitialExpanded = () => {
     if (pathname === '/employee/employee-profile') return { Information: true };
     if (pathname === '/employee-search') return { Main: true };
+    if (pathname === '/main/analytics-hub') return { Main: true };
     return {};
   };
 
@@ -50,6 +51,7 @@ export default function EmployeeSidebar() {
   const [activeItem, setActiveItem] = useState(() => {
     if (pathname === '/employee/employee-profile') return 'Information';
     if (pathname === '/employee-search') return 'Main';
+    if (pathname === '/main/analytics-hub') return 'Main';
     return 'Employee';
   });
 
@@ -57,13 +59,25 @@ export default function EmployeeSidebar() {
     setExpanded((prev) => ({ ...prev, [label]: !prev[label] }));
   };
 
+  let activeSubItem = '';
+  if (pathname === '/employee/employee-profile') activeSubItem = 'Employee Profile';
+  else if (pathname === '/employee-search') activeSubItem = 'Employee Directory';
+  else if (pathname === '/main/analytics-hub') activeSubItem = 'Analytics Hub';
+
   return (
     <aside className="emp-sidebar">
-      {/* Breadcrumb inside sidebar */}
       <div className="emp-sidebar-breadcrumb">
         <Link to="/home" className="gm-breadcrumb-link">Home</Link>
         <span className="gm-breadcrumb-separator">&gt;</span>
-        <span className="gm-breadcrumb-current">Employee</span>
+        <span className={activeSubItem ? "gm-breadcrumb-link" : "gm-breadcrumb-current"} style={activeSubItem ? {textDecoration: 'none', color: '#64748b'} : {}}>
+          {activeItem}
+        </span>
+        {activeSubItem && (
+          <>
+            <span className="gm-breadcrumb-separator">&gt;</span>
+            <span className="gm-breadcrumb-current" style={{color: '#334155'}}>{activeSubItem}</span>
+          </>
+        )}
       </div>
 
       {/* Navigation */}
@@ -96,11 +110,14 @@ export default function EmployeeSidebar() {
                     className={`emp-sub-item ${isActiveSub(sub) ? 'active' : ''}`}
                     style={{ cursor: 'pointer' }}
                     onClick={() => {
-                      if (sub === 'Employee Profile') {
-                        navigate('/employee/employee-profile');
-                      } else if (sub === 'Employee Directory') {
-                        navigate('/employee-search');
-                      }
+                      const toPath = sub === 'Employee Profile'
+                        ? '/employee/employee-profile'
+                        : sub === 'Employee Directory'
+                        ? '/employee-search'
+                        : sub === 'Analytics Hub'
+                        ? '/main/analytics-hub'
+                        : '#';
+                      if (toPath !== '#') navigate(toPath);
                     }}
                   >
                     {sub}

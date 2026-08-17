@@ -215,6 +215,7 @@
   position: sticky;
   top: 0;
   z-index: 1;
+  white-space: nowrap;
 }
 
 .emp-results-table td {
@@ -222,10 +223,39 @@
   font-size: 14px;
   color: #1f2937;
   border-bottom: 1px solid #e5e7eb;
+  white-space: nowrap;
 }
 
-.emp-results-table tr:hover td {
-  background: #f9fafb;
+.emp-results-table tr {
+  background-color: white;
+}
+
+.emp-results-table tr:hover {
+  background-color: #f9fafb;
+}
+
+.emp-results-table th:nth-child(1),
+.emp-results-table td:nth-child(1) {
+  position: sticky;
+  left: 0;
+  min-width: 100px;
+  background-color: inherit;
+  z-index: 2;
+}
+
+.emp-results-table th:nth-child(2),
+.emp-results-table td:nth-child(2) {
+  position: sticky;
+  left: 100px;
+  min-width: 150px;
+  background-color: inherit;
+  z-index: 2;
+}
+
+.emp-results-table th:nth-child(1),
+.emp-results-table th:nth-child(2) {
+  background-color: #f9fafb;
+  z-index: 3;
 }
 
 .emp-no-results {
@@ -242,4 +272,37 @@
   font-weight: 600;
   background: #f0fdf4;
   color: #157a55;
+}
+
+.emp-status-probation {
+  background: #fff7ed;
+  color: #c2410c;
+}
+.emp-search-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 64px 24px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  margin-top: 24px;
+}
+
+.emp-search-placeholder-icon {
+  margin-bottom: 16px;
+}
+
+.emp-search-placeholder h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 8px;
+}
+
+.emp-search-placeholder p {
+  font-size: 14px;
+  color: #6b7280;
 }

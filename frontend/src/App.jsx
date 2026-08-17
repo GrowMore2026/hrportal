@@ -7,6 +7,8 @@ import HomePage from './hr-admin-portal/HomePage/HomePage';
 import Employee from './hr-admin-portal/Employee/Employee';
 import EmployeeProfile from './hr-admin-portal/Employee/EmployeeProfile';
 import EmployeeProfileSearch from './hr-admin-portal/Employee/Information/Employee-profile/EmployeeProfileSearch';
+import AnalyticsHub from './hr-admin-portal/Employee/Main/Analytics Hub/AnalyticsHub';
+import MyProfile from './hr-admin-portal/Profile/MyProfile';
 import Payroll from './hr-admin-portal/Payroll/Payroll';
 import WorkforceManagement from './hr-admin-portal/Workforce-Management/WorkforceManagement';
 import './App.css';
@@ -22,8 +24,11 @@ function App() {
           <Route path="/home" element={<WelcomePage />} />
           <Route path="/home/dashboard" element={<Dashboard />} />
           <Route path="/employee" element={<Employee />} />
-          <Route path="/employee/employee-profile/add-employee" element={<EmployeeProfile />} />
+          <Route path="/employee/add-employee" element={<EmployeeProfile />} />
           <Route path="/employee/employee-profile" element={<EmployeeProfileSearch />} />
+          <Route path="/employee/profile/:id" element={<MyProfile />} />
+          <Route path="/employee/my-profile" element={<MyProfile />} />
+          <Route path="/main/analytics-hub" element={<AnalyticsHub />} />
           <Route path="/payroll" element={<Payroll />} />
           <Route path="/workforce-management" element={<WorkforceManagement />} />
         </Route>

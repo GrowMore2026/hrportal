@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import EmployeeSidebar from '../../EmployeeSidebar';
-import EmployeeProfileDetail from './EmployeeProfileDetail';
+import MyProfile from '../../../Profile/MyProfile';
 import '../../EmployeeSidebar.css';
 import './EmployeeProfileSearch.css';
 import Papa from 'papaparse';
 
 export default function EmployeeProfileSearch() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [query, setQuery] = useState('');
   const [results, setResults] = useState([]);
-  const [selectedEmployee, setSelectedEmployee] = useState(null);
+  const [selectedEmployee, setSelectedEmployee] = useState(location.state?.employee || null);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -118,6 +119,46 @@ export default function EmployeeProfileSearch() {
                     }}
                   />
               <svg className="emp-search-magnifier" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              
+              {query.trim() !== '' && results.length > 0 && !selectedEmployee && (
+                <div className="emp-search-autocomplete-dropdown" style={{
+                  position: 'absolute',
+                  top: '100%',
+                  left: 0,
+                  right: 0,
+                  backgroundColor: 'white',
+                  border: '1px solid #e2e8f0',
+                  borderRadius: '8px',
+                  marginTop: '4px',
+                  boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
+                  zIndex: 50,
+                  maxHeight: '300px',
+                  overflowY: 'auto'
+                }}>
+                  {results.map(emp => (
+                    <div 
+                      key={emp.id}
+                      className="emp-search-autocomplete-item"
+                      style={{
+                        padding: '12px 16px',
+                        cursor: 'pointer',
+                        borderBottom: '1px solid #f1f5f9',
+                        display: 'flex',
+                        flexDirection: 'column',
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f8fafc'}
+                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                      onClick={() => {
+                        setSelectedEmployee(emp);
+                        setQuery('');
+                      }}
+                    >
+                      <span style={{ fontWeight: 500, color: '#0f172a' }}>{`${emp.first_name || ''} ${emp.last_name || ''}`.trim() || 'Unknown Name'}</span>
+                      <span style={{ fontSize: '12px', color: '#64748b' }}>{emp.emp_code || 'No Code'} • {emp.designation || 'No Designation'}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -142,64 +183,16 @@ export default function EmployeeProfileSearch() {
       </div>
         
         {selectedEmployee ? (
-          <EmployeeProfileDetail employee={selectedEmployee} />
-        ) : (query || results.length > 0) ? (
-          <div className="emp-search-results-container">
-        {isLoading ? (
-          <div className="emp-search-loading-container">
-            <div className="emp-spinner"></div>
-            <p className="emp-search-loading-text">Searching employees...</p>
-          </div>
+          <MyProfile employeeId={selectedEmployee.id} isInline={true} />
         ) : (
-          <div className="emp-table-wrapper">
-            <table className="emp-results-table">
-              <thead>
-                <tr>
-                  <th>Emp No</th>
-                  <th>Name</th>
-                  <th>Department</th>
-                  <th>Designation</th>
-                  <th>Email</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {results.length > 0 ? (
-                  results.map((emp) => (
-                    <tr 
-                      key={emp.id} 
-                      onClick={() => setSelectedEmployee({
-                        ...emp,
-                        name: `${emp.first_name || ''} ${emp.last_name || ''}`.trim() || 'Employee Name',
-                        department: emp.department || 'Department',
-                        designation: emp.designation || 'Designation',
-                        email: emp.email || 'email@example.com',
-                        status: emp.status || 'Active'
-                      })}
-                      style={{ cursor: 'pointer' }}
-                      className="emp-search-row-clickable"
-                    >
-                      <td>{emp.emp_code || '-'}</td>
-                      <td>{`${emp.first_name || ''} ${emp.last_name || ''}`.trim() || '-'}</td>
-                      <td>{emp.department || '-'}</td>
-                      <td>{emp.designation || '-'}</td>
-                      <td>{emp.email || '-'}</td>
-                      <td>
-                        <span className="emp-status-badge">{emp.status || 'Active'}</span>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="6" className="emp-no-results">No employees found. Try a different search term.</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
+          <div className="emp-search-placeholder">
+            <div className="emp-search-placeholder-icon">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+            </div>
+            <h3>Find an Employee</h3>
+            <p>Start searching to see specific employee details here.</p>
           </div>
         )}
-      </div>
-        ) : null}
       </div>
       </main>
     </div>

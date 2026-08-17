@@ -99,6 +99,13 @@ exports.updateEmployee = async (req, res) => {
     // Remove frontend-only synthesized fields
     delete updateData.name;
 
+    // Debug: check for long fields
+    for (const key in updateData) {
+      if (typeof updateData[key] === 'string' && updateData[key].length > 255) {
+        console.log(`WARNING: Field '${key}' is ${updateData[key].length} characters long.`);
+      }
+    }
+
     // Convert empty strings to null for database type constraints (e.g., date fields)
     for (const key in updateData) {
       if (updateData[key] === '') {
@@ -114,6 +121,25 @@ exports.updateEmployee = async (req, res) => {
 
     if (error) {
       console.error('Error updating employee:', error);
+      console.log('Update Data being sent:', JSON.stringify(updateData).substring(0, 500) + '...');
+      if (error.code === '22001') {
+        // Find which field is too long
+        let longFields = [];
+        for (const key in updateData) {
+          const val = updateData[key];
+          const valStr = typeof val === 'string' ? val : JSON.stringify(val);
+          if (valStr && valStr.length > 255) {
+            longFields.push(`${key} (length: ${valStr.length})`);
+          }
+        }
+        if (longFields.length > 0) {
+          return res.status(400).json({ 
+            error: `The following fields exceed 255 characters: ${longFields.join(', ')}.` 
+          });
+        } else {
+          console.error("22001 error but NO fields > 255 chars in JS. Update keys:", Object.keys(updateData));
+        }
+      }
       return res.status(500).json({ error: error.message });
     }
 
@@ -167,6 +193,27 @@ exports.bulkCreateEmployees = async (req, res) => {
 
   } catch (err) {
     console.error('Server error in bulkCreateEmployees:', err);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+exports.getEmployeeById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { data, error } = await supabase
+      .from('employees')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (error) {
+      console.error('Error fetching employee by id:', error);
+      return res.status(404).json({ error: 'Employee not found' });
+    }
+
+    return res.status(200).json({ employee: data });
+  } catch (err) {
+    console.error('Server error in getEmployeeById:', err);
     return res.status(500).json({ error: 'Internal server error' });
   }
 };
