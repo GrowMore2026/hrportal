@@ -30,7 +30,7 @@ const SubSectionHeader = ({ title }) => (
   </div>
 );
 
-const DetailItem = ({ label, name, value, link, isEditing, onChange, type="text", options }) => (
+const DetailItem = ({ label, name, value, link, isEditing, onChange, onFileChange, type="text", options }) => (
   <div className="emp-detail-item">
     <span className="emp-detail-label">{label}</span>
     <span className="emp-detail-value">
@@ -67,6 +67,15 @@ const DetailItem = ({ label, name, value, link, isEditing, onChange, type="text"
             dropdownMode="select"
             placeholderText="Select date"
           />
+        ) : type === 'file' ? (
+          <input 
+            className="emp-input" 
+            type="file" 
+            name={name} 
+            accept=".jpg, .jpeg, .png"
+            onChange={onFileChange} 
+            style={{ marginTop: '4px', padding: '6px', fontSize: '14px', width: '100%', maxWidth: '250px' }} 
+          />
         ) : (
           <input 
             className="emp-input" 
@@ -78,7 +87,7 @@ const DetailItem = ({ label, name, value, link, isEditing, onChange, type="text"
           />
         )
       ) : (
-        link ? <a href={link}>{value}</a> : (value || '-')
+        link ? <a href={link}>{value}</a> : type === 'file' ? (value ? 'Uploaded' : 'No Photo') : (value || '-')
       )}
     </span>
   </div>
@@ -121,8 +130,26 @@ export default function EmployeeProfileDetail({ employee: initialEmployee }) {
   };
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setEditFormData(prev => ({ ...prev, [name]: value }));
+    const { name, value, type, checked } = e.target;
+    setEditFormData(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value
+    }));
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    const { name } = e.target;
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setEditFormData(prev => ({
+          ...prev,
+          [name]: reader.result
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleSave = async () => {
@@ -166,10 +193,14 @@ export default function EmployeeProfileDetail({ employee: initialEmployee }) {
       <div className="emp-detail-banner">
         <div className="emp-detail-banner-left">
           <div className="emp-detail-avatar-wrapper">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-              <circle cx="12" cy="7" r="4"></circle>
-            </svg>
+            {employee.profile_image ? (
+               <img src={employee.profile_image} alt="Profile" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
+            ) : (
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+            )}
           </div>
           <div className="emp-detail-banner-info">
             <h2 className="emp-detail-name">{employee.first_name} {employee.last_name}</h2>
@@ -195,6 +226,7 @@ export default function EmployeeProfileDetail({ employee: initialEmployee }) {
           <DetailItem label="Gender" name="gender" value={currentData.gender} isEditing={isSecEdit('basic')} onChange={handleChange} options={['Select', 'Male', 'Female', 'Other']} />
           <DetailItem label="Email" name="email" value={currentData.email} isEditing={isSecEdit('basic')} onChange={handleChange} link={!isSecEdit('basic') && currentData.email ? `mailto:${currentData.email}` : undefined} />
           <DetailItem label="Mobile" name="mobile" value={currentData.mobile} isEditing={isSecEdit('basic')} onChange={handleChange} />
+          <DetailItem label="Profile Photo" name="profile_image" type="file" value={currentData.profile_image} isEditing={isSecEdit('basic')} onFileChange={handleFileChange} />
         </div>
       </div>
 

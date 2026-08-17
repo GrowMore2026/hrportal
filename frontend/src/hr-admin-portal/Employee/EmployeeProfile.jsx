@@ -51,6 +51,20 @@ export default function EmployeeProfile() {
     }));
   };
 
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData(prev => ({
+          ...prev,
+          profile_image: reader.result
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const submitForm = async () => {
     setIsSubmitting(true);
     try {
@@ -215,8 +229,17 @@ export default function EmployeeProfile() {
                   <div className="emp-form-input-wrap"><input type="text" className="emp-input" name="spouse_name" value={formData.spouse_name} onChange={handleChange} placeholder="Spouse Name" /></div>
                 </div>
                 <div className="emp-form-group">
-                  <label className="emp-form-label">Profile Image URL</label>
-                  <div className="emp-form-input-wrap"><input type="text" className="emp-input" name="profile_image" value={formData.profile_image} onChange={handleChange} placeholder="profile_pic.jpg" /></div>
+                  <label className="emp-form-label">Profile Image Upload</label>
+                  <div className="emp-form-input-wrap">
+                    <input 
+                      type="file" 
+                      className="emp-input" 
+                      name="profile_image" 
+                      accept=".jpg, .jpeg, .png" 
+                      onChange={handleFileChange} 
+                      style={{ padding: '8px' }}
+                    />
+                  </div>
                 </div>
               </div>
             </form>

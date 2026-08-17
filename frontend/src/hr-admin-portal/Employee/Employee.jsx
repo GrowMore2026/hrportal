@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
@@ -10,14 +10,7 @@ import '../HomePage/Dashboard.css';
 import './EmployeeSidebar.css';
 
 /* ── Chart data ── */
-const headCountData = [
-  { month: 'Mar', count: 5 },
-  { month: 'Apr', count: 24 },
-  { month: 'May', count: 32 },
-  { month: 'Jun', count: 46 },
-  { month: 'Jul', count: 42 },
-  { month: 'Aug', count: 42 },
-];
+// headCountData is now generated dynamically in the component
 
 const loginStatsData = [
   { day: '5', last: 35, current: 36 },
@@ -61,6 +54,47 @@ const resignedEmployees = [
 ];
 
 export default function Employee() {
+  const [headCountData, setHeadCountData] = useState([]);
+
+  useEffect(() => {
+    const fetchEmployees = async () => {
+      try {
+        const res = await fetch('http://localhost:5000/api/employees');
+        if (res.ok) {
+          const data = await res.json();
+          const employees = data.employees || [];
+          
+          const resultData = [];
+          const now = new Date();
+          
+          for (let i = 5; i >= 0; i--) {
+            const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+            const monthStr = d.toLocaleString('default', { month: 'short' });
+            const endOfMonth = new Date(now.getFullYear(), now.getMonth() - i + 1, 0, 23, 59, 59);
+            
+            let count = 0;
+            employees.forEach(emp => {
+              const dateStr = emp.doj || emp.created_at;
+              if (dateStr) {
+                const empDate = new Date(dateStr);
+                if (empDate <= endOfMonth && emp.status !== 'Resigned') {
+                  count++;
+                }
+              }
+            });
+            
+            resultData.push({ month: monthStr, count });
+          }
+          setHeadCountData(resultData);
+        }
+      } catch (err) {
+        console.error('Failed to fetch employees for head count', err);
+      }
+    };
+    
+    fetchEmployees();
+  }, []);
+
   return (
     <div className="emp-page-layout">
       {/* ── Sidebar ── */}
