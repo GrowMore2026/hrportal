@@ -144,7 +144,7 @@ export default function EmployeeProfileSearch() {
                         setQuery('');
                       }}
                     >
-                      <span style={{ fontWeight: 500, color: '#0f172a' }}>{`${emp.first_name || ''} ${emp.last_name || ''}`.trim() || 'Unknown Name'}</span>
+                      <span style={{ fontWeight: 500, color: '#1c9c6e' }}>{`${emp.first_name || ''} ${emp.last_name || ''}`.trim() || 'Unknown Name'}</span>
                       <span style={{ fontSize: '12px', color: '#64748b' }}>{emp.emp_code || 'No Code'} • {emp.designation || 'No Designation'}</span>
                     </div>
                   ))}

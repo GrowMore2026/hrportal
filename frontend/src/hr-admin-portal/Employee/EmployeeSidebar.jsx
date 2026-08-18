@@ -92,8 +92,17 @@ export default function EmployeeSidebar() {
               className={`emp-nav-item ${activeItem === item.label ? 'active' : ''}`}
               onClick={() => {
                 setActiveItem(item.label);
-                if (item.expandable) toggleExpand(item.label);
-                else if (item.path) navigate(item.path);
+                if (item.label === 'Main') {
+                  navigate('/main/analytics-hub');
+                  if (!expanded[item.label]) toggleExpand(item.label);
+                } else if (item.label === 'Information') {
+                  navigate('/employee/employee-profile');
+                  if (!expanded[item.label]) toggleExpand(item.label);
+                } else if (item.expandable) {
+                  toggleExpand(item.label);
+                } else if (item.path) {
+                  navigate(item.path);
+                }
               }}
               style={{ cursor: 'pointer' }}
             >
