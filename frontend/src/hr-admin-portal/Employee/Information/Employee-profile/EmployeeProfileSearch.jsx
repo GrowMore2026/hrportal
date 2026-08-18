@@ -94,16 +94,7 @@ export default function EmployeeProfileSearch() {
             <div className="emp-search-left">
               <h1 className="emp-search-title">Start searching to see specific employee details here</h1>
               
-              <div className="emp-search-type-dropdown">
-                <span className="emp-type-label">Employee Type:</span>
-                <span className="emp-type-value">
-                  Current Employees 
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: '4px' }}><polyline points="6 9 12 15 18 9"></polyline></svg>
-                </span>
-              </div>
-
               <div className="emp-search-input-section">
-                <label className="emp-search-label">Search Employee</label>
                 <div className="emp-search-input-wrapper">
                   <div className="emp-search-icon-bg">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>

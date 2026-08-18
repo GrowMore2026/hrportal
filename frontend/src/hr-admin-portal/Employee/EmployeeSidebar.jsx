@@ -36,6 +36,7 @@ export default function EmployeeSidebar() {
     if (sub === 'Employee Profile' && pathname === '/employee/employee-profile') return true;
     if (sub === 'Employee Directory' && pathname === '/employee-search') return true;
     if (sub === 'Analytics Hub' && pathname === '/main/analytics-hub') return true;
+    if (sub === 'Organization Chart' && pathname === '/main/organization-chart') return true;
     return false;
   };
 
@@ -44,6 +45,7 @@ export default function EmployeeSidebar() {
     if (pathname === '/employee/employee-profile') return { Information: true };
     if (pathname === '/employee-search') return { Main: true };
     if (pathname === '/main/analytics-hub') return { Main: true };
+    if (pathname === '/main/organization-chart') return { Main: true };
     return {};
   };
 
@@ -52,6 +54,7 @@ export default function EmployeeSidebar() {
     if (pathname === '/employee/employee-profile') return 'Information';
     if (pathname === '/employee-search') return 'Main';
     if (pathname === '/main/analytics-hub') return 'Main';
+    if (pathname === '/main/organization-chart') return 'Main';
     return 'Employee';
   });
 
@@ -63,6 +66,7 @@ export default function EmployeeSidebar() {
   if (pathname === '/employee/employee-profile') activeSubItem = 'Employee Profile';
   else if (pathname === '/employee-search') activeSubItem = 'Employee Directory';
   else if (pathname === '/main/analytics-hub') activeSubItem = 'Analytics Hub';
+  else if (pathname === '/main/organization-chart') activeSubItem = 'Organization Chart';
 
   return (
     <aside className="emp-sidebar">
@@ -116,6 +120,8 @@ export default function EmployeeSidebar() {
                         ? '/employee-search'
                         : sub === 'Analytics Hub'
                         ? '/main/analytics-hub'
+                        : sub === 'Organization Chart'
+                        ? '/main/organization-chart'
                         : '#';
                       if (toPath !== '#') navigate(toPath);
                     }}

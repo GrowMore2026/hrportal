@@ -8,6 +8,7 @@ import Employee from './hr-admin-portal/Employee/Employee';
 import EmployeeProfile from './hr-admin-portal/Employee/EmployeeProfile';
 import EmployeeProfileSearch from './hr-admin-portal/Employee/Information/Employee-profile/EmployeeProfileSearch';
 import AnalyticsHub from './hr-admin-portal/Employee/Main/Analytics Hub/AnalyticsHub';
+import OrganizationChart from './hr-admin-portal/Employee/Main/Organization Chart/OrganizationChart';
 import MyProfile from './hr-admin-portal/Profile/MyProfile';
 import Payroll from './hr-admin-portal/Payroll/Payroll';
 import WorkforceManagement from './hr-admin-portal/Workforce-Management/WorkforceManagement';
@@ -29,6 +30,7 @@ function App() {
           <Route path="/employee/profile/:id" element={<MyProfile />} />
           <Route path="/employee/my-profile" element={<MyProfile />} />
           <Route path="/main/analytics-hub" element={<AnalyticsHub />} />
+          <Route path="/main/organization-chart" element={<OrganizationChart />} />
           <Route path="/payroll" element={<Payroll />} />
           <Route path="/workforce-management" element={<WorkforceManagement />} />
         </Route>
