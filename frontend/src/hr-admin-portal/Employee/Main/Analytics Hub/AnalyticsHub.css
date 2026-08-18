@@ -77,9 +77,9 @@
   gap: 6px;
 }
 .analytics-tab.active {
-  border-color: #3b82f6;
-  color: #3b82f6;
-  background-color: #f0f7ff;
+  border-color: #1c9c6e;
+  color: #1c9c6e;
+  background-color: #e8f8f0;
 }
 
 /* Main Table Container */
