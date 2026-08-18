@@ -190,6 +190,37 @@ export default function MyProfile({ employeeId, isInline = false }) {
     }
   };
 
+  const handleBannerImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = async () => {
+        const newImage = reader.result;
+        setIsSaving(true);
+        try {
+          const response = await fetch(`http://localhost:5000/api/employees/${employee.id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ profile_image: newImage }),
+          });
+          const data = await response.json();
+          if (response.ok) {
+            setEmployee(data.employee);
+            setNotification({ show: true, type: 'success', message: 'Profile photo updated successfully!' });
+          } else {
+            throw new Error(data.error || 'Failed to update photo');
+          }
+        } catch (error) {
+          console.error(error);
+          setNotification({ show: true, type: 'error', message: 'Failed to upload photo: ' + error.message });
+        } finally {
+          setIsSaving(false);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const isSecEdit = (sectionId) => editingSection === sectionId;
   const currentData = editingSection ? editFormData : employee;
 
@@ -214,6 +245,36 @@ export default function MyProfile({ employeeId, isInline = false }) {
                 <div className="emp-detail-banner-info">
                   <h2 className="emp-detail-name">{employee.first_name} {employee.last_name}</h2>
                   <p className="emp-detail-id">{employee.emp_code}</p>
+                </div>
+                
+                <div style={{ marginLeft: '24px' }}>
+                  <label 
+                    style={{ 
+                      cursor: 'pointer', 
+                      display: 'inline-flex', 
+                      alignItems: 'center', 
+                      gap: '8px', 
+                      padding: '8px 16px',
+                      backgroundColor: 'rgba(255,255,255,0.2)',
+                      color: 'white',
+                      border: '1px solid rgba(255,255,255,0.4)',
+                      borderRadius: '6px',
+                      fontSize: '13px',
+                      fontWeight: '500',
+                      transition: 'background-color 0.2s'
+                    }}
+                    onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.3)'}
+                    onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.2)'}
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                    Upload Photo
+                    <input 
+                      type="file" 
+                      accept=".jpg, .jpeg, .png" 
+                      style={{ display: 'none' }} 
+                      onChange={handleBannerImageUpload} 
+                    />
+                  </label>
                 </div>
               </div>
             </div>

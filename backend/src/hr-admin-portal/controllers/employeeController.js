@@ -99,17 +99,23 @@ exports.updateEmployee = async (req, res) => {
     // Remove frontend-only synthesized fields
     delete updateData.name;
 
-    // Debug: check for long fields
-    for (const key in updateData) {
-      if (typeof updateData[key] === 'string' && updateData[key].length > 255) {
-        console.log(`WARNING: Field '${key}' is ${updateData[key].length} characters long.`);
+    // Parse date fields from DD-MM-YYYY if necessary
+    const parseDate = (val) => {
+      if (!val || typeof val !== 'string') return val;
+      const trimmed = val.trim();
+      const parts = trimmed.includes('-') ? trimmed.split('-') : trimmed.split('/');
+      if (parts.length === 3 && /^\d{1,2}$/.test(parts[0]) && /^\d{1,2}$/.test(parts[1]) && /^\d{4}$/.test(parts[2])) {
+        return `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
       }
-    }
+      return trimmed;
+    };
 
     // Convert empty strings to null for database type constraints (e.g., date fields)
     for (const key in updateData) {
       if (updateData[key] === '') {
         updateData[key] = null;
+      } else if (typeof updateData[key] === 'string') {
+        updateData[key] = parseDate(updateData[key]);
       }
     }
 
@@ -165,12 +171,32 @@ exports.bulkCreateEmployees = async (req, res) => {
       return res.status(400).json({ error: 'No valid employees array provided' });
     }
 
-    // Convert empty strings to null for database constraints
+    const parseDate = (val) => {
+      if (!val || typeof val !== 'string') return val;
+      const trimmed = val.trim();
+      const parts = trimmed.includes('-') ? trimmed.split('-') : trimmed.split('/');
+      if (parts.length === 3) {
+        if (/^\d{1,2}$/.test(parts[0]) && /^\d{1,2}$/.test(parts[1]) && /^\d{4}$/.test(parts[2])) {
+          const day = parts[0].padStart(2, '0');
+          const month = parts[1].padStart(2, '0');
+          const year = parts[2];
+          return `${year}-${month}-${day}`;
+        }
+      }
+      return trimmed;
+    };
+
+    // Convert empty strings to null for database constraints and parse dates
     const cleanedEmployees = employees.map(emp => {
-      let cleaned = { ...emp };
-      for (const key in cleaned) {
-        if (cleaned[key] === '') {
-          cleaned[key] = null;
+      let cleaned = {};
+      for (const key in emp) {
+        const lowerKey = key.toLowerCase().trim();
+        let val = emp[key];
+        
+        if (val === '') {
+          cleaned[lowerKey] = null;
+        } else {
+          cleaned[lowerKey] = parseDate(val);
         }
       }
       return cleaned;

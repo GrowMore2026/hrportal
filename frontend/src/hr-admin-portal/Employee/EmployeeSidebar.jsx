@@ -34,7 +34,7 @@ export default function EmployeeSidebar() {
 
   const isActiveSub = (sub) => {
     if (sub === 'Employee Profile' && pathname === '/employee/employee-profile') return true;
-    if (sub === 'Employee Directory' && pathname === '/employee-search') return true;
+    if (sub === 'Employee Directory' && pathname === '/main/employee-directory') return true;
     if (sub === 'Analytics Hub' && pathname === '/main/analytics-hub') return true;
     if (sub === 'Organization Chart' && pathname === '/main/organization-chart') return true;
     return false;
@@ -43,7 +43,7 @@ export default function EmployeeSidebar() {
   // Determine which section to expand initially
   const getInitialExpanded = () => {
     if (pathname === '/employee/employee-profile') return { Information: true };
-    if (pathname === '/employee-search') return { Main: true };
+    if (pathname === '/main/employee-directory') return { Main: true };
     if (pathname === '/main/analytics-hub') return { Main: true };
     if (pathname === '/main/organization-chart') return { Main: true };
     return {};
@@ -52,7 +52,7 @@ export default function EmployeeSidebar() {
   const [expanded, setExpanded] = useState(getInitialExpanded());
   const [activeItem, setActiveItem] = useState(() => {
     if (pathname === '/employee/employee-profile') return 'Information';
-    if (pathname === '/employee-search') return 'Main';
+    if (pathname === '/main/employee-directory') return 'Main';
     if (pathname === '/main/analytics-hub') return 'Main';
     if (pathname === '/main/organization-chart') return 'Main';
     return 'Employee';
@@ -64,7 +64,7 @@ export default function EmployeeSidebar() {
 
   let activeSubItem = '';
   if (pathname === '/employee/employee-profile') activeSubItem = 'Employee Profile';
-  else if (pathname === '/employee-search') activeSubItem = 'Employee Directory';
+  else if (pathname === '/main/employee-directory') activeSubItem = 'Employee Directory';
   else if (pathname === '/main/analytics-hub') activeSubItem = 'Analytics Hub';
   else if (pathname === '/main/organization-chart') activeSubItem = 'Organization Chart';
 
@@ -117,7 +117,7 @@ export default function EmployeeSidebar() {
                       const toPath = sub === 'Employee Profile'
                         ? '/employee/employee-profile'
                         : sub === 'Employee Directory'
-                        ? '/employee-search'
+                        ? '/main/employee-directory'
                         : sub === 'Analytics Hub'
                         ? '/main/analytics-hub'
                         : sub === 'Organization Chart'
