@@ -48,9 +48,13 @@ exports.createEmployee = async (req, res) => {
 
 exports.searchEmployees = async (req, res) => {
   try {
-    const { query } = req.query;
+    const { query, status } = req.query;
     
     let dbQuery = supabase.from('employees').select('*').order('created_at', { ascending: false });
+    
+    if (status && status !== 'All') {
+      dbQuery = dbQuery.eq('status', status);
+    }
     
     if (query) {
       dbQuery = dbQuery.or(`first_name.ilike.%${query}%,last_name.ilike.%${query}%,emp_code.ilike.%${query}%`);
@@ -240,6 +244,104 @@ exports.getEmployeeById = async (req, res) => {
     return res.status(200).json({ employee: data });
   } catch (err) {
     console.error('Server error in getEmployeeById:', err);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+};
+// ==========================================
+// FAMILY DETAILS CONTROLLERS
+// ==========================================
+
+exports.getEmployeeFamily = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { data, error } = await supabase
+      .from('employee_family_details')
+      .select('*')
+      .eq('employee_id', id)
+      .order('created_at', { ascending: true });
+
+    if (error) {
+      console.error('Error fetching family details:', error);
+      return res.status(500).json({ error: error.message });
+    }
+
+    return res.status(200).json({ family: data });
+  } catch (err) {
+    console.error('Server error in getEmployeeFamily:', err);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+exports.addEmployeeFamily = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const familyData = { ...req.body, employee_id: id };
+    
+    // Clean up empty strings that can cause DB type errors
+    if (familyData.dob === '') {
+      familyData.dob = null;
+    }
+
+    const { data, error } = await supabase
+      .from('employee_family_details')
+      .insert([familyData])
+      .select();
+
+    if (error) {
+      console.error('Error adding family details:', error);
+      return res.status(500).json({ error: error.message });
+    }
+
+    return res.status(201).json({ message: 'Family member added successfully', family: data[0] });
+  } catch (err) {
+    console.error('Server error in addEmployeeFamily:', err);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+exports.updateEmployeeFamily = async (req, res) => {
+  try {
+    const { familyId } = req.params;
+    let updateData = { ...req.body };
+    delete updateData.id;
+    delete updateData.employee_id;
+    updateData.updated_at = new Date();
+
+    const { data, error } = await supabase
+      .from('employee_family_details')
+      .update(updateData)
+      .eq('id', familyId)
+      .select();
+
+    if (error) {
+      console.error('Error updating family details:', error);
+      return res.status(500).json({ error: error.message });
+    }
+
+    return res.status(200).json({ message: 'Family member updated successfully', family: data[0] });
+  } catch (err) {
+    console.error('Server error in updateEmployeeFamily:', err);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+exports.deleteEmployeeFamily = async (req, res) => {
+  try {
+    const { familyId } = req.params;
+
+    const { error } = await supabase
+      .from('employee_family_details')
+      .delete()
+      .eq('id', familyId);
+
+    if (error) {
+      console.error('Error deleting family details:', error);
+      return res.status(500).json({ error: error.message });
+    }
+
+    return res.status(200).json({ message: 'Family member deleted successfully' });
+  } catch (err) {
+    console.error('Server error in deleteEmployeeFamily:', err);
     return res.status(500).json({ error: 'Internal server error' });
   }
 };

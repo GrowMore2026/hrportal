@@ -37,7 +37,7 @@ export default function EmployeeDirectory() {
   };
 
   const handleNameClick = (emp) => {
-    navigate('/information/employee-profile', { state: { employee: emp } });
+    navigate('/employee/information/employee-profile', { state: { employee: emp } });
   };
 
   return (

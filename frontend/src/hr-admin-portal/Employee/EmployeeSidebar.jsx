@@ -32,29 +32,45 @@ export default function EmployeeSidebar() {
   const location = useLocation();
   const pathname = location.pathname;
 
-  const isActiveSub = (sub) => {
-    if (sub === 'Employee Profile' && pathname === '/information/employee-profile') return true;
-    if (sub === 'Employee Directory' && pathname === '/main/employee-directory') return true;
-    if (sub === 'Analytics Hub' && pathname === '/main/analytics-hub') return true;
-    if (sub === 'Organization Chart' && pathname === '/main/organization-chart') return true;
+  const isActiveSub = (subItem) => {
+    if (subItem === 'Employee Profile' && location.pathname === '/employee/information/employee-profile') return true;
+    if (subItem === 'Employee Directory' && location.pathname === '/employee/main/employee-directory') return true;
+    if (subItem === 'Analytics Hub' && location.pathname === '/employee/main/analytics-hub') return true;
+    if (subItem === 'Organization Chart' && location.pathname === '/employee/main/organization-chart') return true;
+    if (subItem === 'Family Details' && location.pathname === '/employee/information/family-details') return true;
     return false;
+  };
+
+  const handleSubItemClick = (subItem) => {
+    if (subItem === 'Employee Profile') {
+      navigate('/employee/information/employee-profile');
+    } else if (subItem === 'Employee Directory') {
+      navigate('/employee/main/employee-directory');
+    } else if (subItem === 'Analytics Hub') {
+      navigate('/employee/main/analytics-hub');
+    } else if (subItem === 'Organization Chart') {
+      navigate('/employee/main/organization-chart');
+    } else if (subItem === 'Family Details') {
+      navigate('/employee/information/family-details');
+    }
   };
 
   // Determine which section to expand initially
   const getInitialExpanded = () => {
-    if (pathname === '/information/employee-profile') return { Information: true };
-    if (pathname === '/main/employee-directory') return { Main: true };
-    if (pathname === '/main/analytics-hub') return { Main: true };
-    if (pathname === '/main/organization-chart') return { Main: true };
+    if (pathname === '/employee/information/employee-profile') return { Information: true };
+    if (pathname === '/employee/information/family-details') return { Information: true };
+    if (pathname === '/employee/main/employee-directory') return { Main: true };
+    if (pathname === '/employee/main/analytics-hub') return { Main: true };
+    if (pathname === '/employee/main/organization-chart') return { Main: true };
     return {};
   };
 
   const [expanded, setExpanded] = useState(getInitialExpanded());
   const [activeItem, setActiveItem] = useState(() => {
-    if (pathname === '/information/employee-profile') return 'Information';
-    if (pathname === '/main/employee-directory') return 'Main';
-    if (pathname === '/main/analytics-hub') return 'Main';
-    if (pathname === '/main/organization-chart') return 'Main';
+    if (pathname === '/employee/information/employee-profile' || pathname === '/employee/information/family-details') return 'Information';
+    if (pathname === '/employee/main/employee-directory') return 'Main';
+    if (pathname === '/employee/main/analytics-hub') return 'Main';
+    if (pathname === '/employee/main/organization-chart') return 'Main';
     return 'Employee';
   });
 
@@ -63,10 +79,11 @@ export default function EmployeeSidebar() {
   };
 
   let activeSubItem = '';
-  if (pathname === '/information/employee-profile') activeSubItem = 'Employee Profile';
-  else if (pathname === '/main/employee-directory') activeSubItem = 'Employee Directory';
-  else if (pathname === '/main/analytics-hub') activeSubItem = 'Analytics Hub';
-  else if (pathname === '/main/organization-chart') activeSubItem = 'Organization Chart';
+  if (pathname === '/employee/information/employee-profile') activeSubItem = 'Employee Profile';
+  else if (pathname === '/employee/information/family-details') activeSubItem = 'Family Details';
+  else if (pathname === '/employee/main/employee-directory') activeSubItem = 'Employee Directory';
+  else if (pathname === '/employee/main/analytics-hub') activeSubItem = 'Analytics Hub';
+  else if (pathname === '/employee/main/organization-chart') activeSubItem = 'Organization Chart';
 
   return (
     <aside className="emp-sidebar">
@@ -93,10 +110,10 @@ export default function EmployeeSidebar() {
               onClick={() => {
                 setActiveItem(item.label);
                 if (item.label === 'Main') {
-                  navigate('/main/analytics-hub');
+                  navigate('/employee/main/analytics-hub');
                   if (!expanded[item.label]) toggleExpand(item.label);
                 } else if (item.label === 'Information') {
-                  navigate('/information/employee-profile');
+                  navigate('/employee/information/employee-profile');
                   if (!expanded[item.label]) toggleExpand(item.label);
                 } else if (item.expandable) {
                   toggleExpand(item.label);
@@ -122,18 +139,7 @@ export default function EmployeeSidebar() {
                     key={sub} 
                     className={`emp-sub-item ${isActiveSub(sub) ? 'active' : ''}`}
                     style={{ cursor: 'pointer' }}
-                    onClick={() => {
-                      const toPath = sub === 'Employee Profile'
-                        ? '/information/employee-profile'
-                        : sub === 'Employee Directory'
-                        ? '/main/employee-directory'
-                        : sub === 'Analytics Hub'
-                        ? '/main/analytics-hub'
-                        : sub === 'Organization Chart'
-                        ? '/main/organization-chart'
-                        : '#';
-                      if (toPath !== '#') navigate(toPath);
-                    }}
+                    onClick={() => handleSubItemClick(sub)}
                   >
                     {sub}
                   </div>
