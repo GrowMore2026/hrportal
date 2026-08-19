@@ -344,7 +344,7 @@ export default function HomePage({ userName = '' }) {
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
                     <div className="gm-app-name">Main</div>
                   </div>
-                  <div className="gm-app-item" onClick={() => { navigate('/employee/employee-profile'); setShowAppsMenu(false); }}>
+                  <div className="gm-app-item" onClick={() => { navigate('/information/employee-profile'); setShowAppsMenu(false); }}>
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
                     <div className="gm-app-name">Information</div>
                   </div>

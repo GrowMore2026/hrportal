@@ -165,7 +165,7 @@ export default function EmployeeProfileSearch() {
             </label>
             <button 
               className="emp-primary-btn"
-              onClick={() => navigate('/employee/employee-profile/add-employee')}
+              onClick={() => navigate('/employee/add-employee')}
             >
               + Add Employee
             </button>

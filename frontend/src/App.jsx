@@ -27,7 +27,7 @@ function App() {
           <Route path="/home/dashboard" element={<Dashboard />} />
           <Route path="/employee" element={<Employee />} />
           <Route path="/employee/add-employee" element={<EmployeeProfile />} />
-          <Route path="/employee/employee-profile" element={<EmployeeProfileSearch />} />
+          <Route path="/information/employee-profile" element={<EmployeeProfileSearch />} />
           <Route path="/employee/profile/:id" element={<MyProfile />} />
           <Route path="/employee/my-profile" element={<MyProfile />} />
           <Route path="/main/analytics-hub" element={<AnalyticsHub />} />

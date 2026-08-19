@@ -164,7 +164,7 @@ export default function AnalyticsHub() {
                             <td>{emp.emp_code}</td>
                             <td 
                               style={{fontWeight: 500, cursor: 'pointer', color: '#1c9c6e'}} 
-                              onClick={() => navigate('/employee/employee-profile', { state: { employee: emp } })}
+                              onClick={() => navigate('/information/employee-profile', { state: { employee: emp } })}
                             >
                               {emp.first_name} {emp.last_name}
                             </td>

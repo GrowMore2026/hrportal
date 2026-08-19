@@ -68,22 +68,43 @@ export default function Employee() {
           const now = new Date();
           
           for (let i = 5; i >= 0; i--) {
-            const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-            const monthStr = d.toLocaleString('default', { month: 'short' });
+            const startOfMonth = new Date(now.getFullYear(), now.getMonth() - i, 1);
             const endOfMonth = new Date(now.getFullYear(), now.getMonth() - i + 1, 0, 23, 59, 59);
+            const monthStr = startOfMonth.toLocaleString('default', { month: 'short' });
             
             let count = 0;
+            let added = 0;
+            let removed = 0;
+            
             employees.forEach(emp => {
-              const dateStr = emp.doj || emp.created_at;
-              if (dateStr) {
-                const empDate = new Date(dateStr);
-                if (empDate <= endOfMonth && emp.status !== 'Resigned') {
-                  count++;
+              const joinDateStr = emp.doj || emp.created_at;
+              if (joinDateStr) {
+                const joinDate = new Date(joinDateStr);
+                
+                // Added this month
+                if (joinDate >= startOfMonth && joinDate <= endOfMonth) {
+                  added++;
+                }
+                
+                // Removed this month
+                const sepDateStr = emp.separation_date || emp.updated_at || emp.created_at;
+                const sepDate = new Date(sepDateStr);
+                if (emp.status === 'Resigned' && sepDate >= startOfMonth && sepDate <= endOfMonth) {
+                  removed++;
+                }
+                
+                // Headcount at the end of the month
+                if (joinDate <= endOfMonth) {
+                  if (emp.status !== 'Resigned') {
+                    count++;
+                  } else if (sepDate > endOfMonth) {
+                    count++;
+                  }
                 }
               }
             });
             
-            resultData.push({ month: monthStr, count });
+            resultData.push({ month: monthStr, count, added, removed });
           }
           setHeadCountData(resultData);
         }
@@ -108,13 +129,16 @@ export default function Employee() {
           <div className="emp-card emp-card--wide">
             <h3 className="emp-card-title">Employees Head Count</h3>
             <div className="emp-chart-wrap" style={{ marginTop: '-10px' }}>
-              <ResponsiveContainer width="100%" height={160}>
+              <ResponsiveContainer width="100%" height={200}>
                 <LineChart data={headCountData} margin={{ top: 20, right: 20, left: -20, bottom: 0 }}>
                   <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="#f0f0f0" />
                   <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#6b7280' }} axisLine={{ stroke: '#e5e7eb' }} tickLine={false} />
-                  <YAxis ticks={[0, 12, 24, 36, 48]} tick={{ fontSize: 11, fill: '#6b7280' }} axisLine={false} tickLine={false} />
-                  <Tooltip />
-                  <Line type="linear" dataKey="count" stroke="#14b8a6" strokeWidth={1.5} dot={{ r: 3, fill: '#14b8a6' }} activeDot={{ r: 5 }} />
+                  <YAxis tick={{ fontSize: 11, fill: '#6b7280' }} axisLine={false} tickLine={false} />
+                  <Tooltip wrapperStyle={{ fontSize: '12px' }} />
+                  <Legend wrapperStyle={{ fontSize: '12px', paddingTop: '10px' }} />
+                  <Line type="linear" dataKey="count" name="Total Head Count" stroke="#1c9c6e" strokeWidth={1.5} dot={{ r: 3, fill: '#1c9c6e' }} activeDot={{ r: 5 }} />
+                  <Line type="linear" dataKey="added" name="Added" stroke="#3b82f6" strokeWidth={1.5} dot={{ r: 3, fill: '#3b82f6' }} activeDot={{ r: 5 }} />
+                  <Line type="linear" dataKey="removed" name="Removed" stroke="#ef4444" strokeWidth={1.5} dot={{ r: 3, fill: '#ef4444' }} activeDot={{ r: 5 }} />
                 </LineChart>
               </ResponsiveContainer>
             </div>
