@@ -16,12 +16,18 @@ import WorkforceManagement from './hr-admin-portal/Workforce-Management/Workforc
 import './App.css';
 
 import FamilyDetails from './hr-admin-portal/Employee/Information/Family Details/FamilyDetails';
+import EmployeePortal from './employee-portal/EmployeePortal';
+import EmployeeWelcome from './employee-portal/EmployeeWelcome';
 
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<LoginPage />} />
+        
+        <Route path="/employee-portal" element={<EmployeePortal />}>
+          <Route index element={<EmployeeWelcome />} />
+        </Route>
         
         {/* Main Layout with Top Nav */}
         <Route element={<HomePage />}>

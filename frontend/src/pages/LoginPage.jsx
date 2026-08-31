@@ -17,10 +17,13 @@ const LoginPage = () => {
     e.preventDefault();
     setError('');
 
-    // Hardcoded check for HR Admin
+    // Hardcoded check for HR Admin and new Employee Portal
     if (email === 'krushant@growmor.co.in' && password === 'GrowMore@2026') {
       console.log("Login successful! Redirecting...");
       navigate('/home');
+    } else if (email === 'GM009' && password === 'Krushant@1212') {
+      console.log("Login successful! Redirecting to Employee Portal...");
+      navigate('/employee-portal');
     } else {
       setError('Invalid email or password');
     }

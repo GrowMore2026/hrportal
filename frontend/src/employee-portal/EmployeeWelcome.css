@@ -1,0 +1,193 @@
+.ew-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Hero Section */
+.ew-hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+}
+
+.ew-hero-text {
+  max-width: 60%;
+}
+
+.ew-greeting {
+  font-size: 24px;
+  color: #1e3a5f; /* Dark blue from design */
+  margin: 0 0 16px 0;
+  font-weight: 600;
+}
+
+.ew-quote {
+  font-size: 16px;
+  color: #64748b;
+  margin: 0 0 8px 0;
+}
+
+.ew-author {
+  font-size: 14px;
+  color: #94a3b8;
+  margin: 0;
+}
+
+.ew-hero-img {
+  flex-shrink: 0;
+}
+
+/* Grid Layout */
+.ew-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.ew-col {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Cards Base */
+.ew-card {
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  padding: 24px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+.ew-card h3 {
+  margin: 0 0 20px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #475569;
+}
+
+.ew-center {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.ew-card p {
+  color: #64748b;
+  font-size: 13px;
+  line-height: 1.5;
+  margin: 16px 0 0 0;
+}
+
+.ew-icon-placeholder {
+  margin: 16px 0;
+}
+
+/* Quick Access */
+.ew-qa-body {
+  display: flex;
+  gap: 16px;
+}
+
+.ew-qa-links {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ew-qa-links a {
+  text-decoration: none;
+  color: #1e40af; /* Link blue */
+  font-size: 13px;
+}
+
+.ew-qa-links a:hover {
+  text-decoration: underline;
+}
+
+.ew-qa-highlight {
+  flex: 1;
+  background-color: #fffaf0; /* Light orange/cream */
+  padding: 16px;
+  border-radius: 8px;
+}
+
+.ew-qa-highlight p {
+  margin: 0;
+  font-size: 12px;
+  color: #b45309;
+}
+
+/* Upcoming Holidays */
+.ew-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.ew-card-header h3 {
+  margin: 0;
+}
+
+.ew-card-header svg {
+  cursor: pointer;
+}
+
+.ew-holiday-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.ew-holiday-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ew-holiday-date {
+  font-size: 14px;
+  color: #334155;
+}
+
+.ew-holiday-date span {
+  font-size: 12px;
+  color: #94a3b8;
+  margin-left: 8px;
+}
+
+.ew-holiday-name {
+  font-size: 13px;
+  color: #64748b;
+}
+
+/* Status Cards (IT / POI) */
+.ew-status-body {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.ew-status-icon {
+  background-color: #f1f5f9;
+  padding: 10px;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.ew-status-body p {
+  margin: 0;
+}
+
+/* Specific heights to match masonry look */
+.ew-review {
+  min-height: 240px;
+}
+.ew-payslip {
+  min-height: 280px;
+}
