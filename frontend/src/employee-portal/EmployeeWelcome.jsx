@@ -19,13 +19,7 @@ export default function EmployeeWelcome() {
           <p className="ew-author">- Dennis P. Kimbro</p>
         </div>
         <div className="ew-hero-img">
-          {/* Placeholder for the car/sun illustration */}
-          <svg width="240" height="120" viewBox="0 0 240 120" fill="none">
-            <path d="M20 100 Q 120 80 220 100" stroke="#1e293b" strokeWidth="2" fill="none" />
-            <circle cx="180" cy="40" r="30" fill="#f87171" />
-            <rect x="140" y="70" width="40" height="30" rx="4" fill="#1c9c6e" />
-            <path d="M145 75 h30 v10 h-30 z" fill="#fff" />
-          </svg>
+          <span style={{ fontSize: '80px', display: 'inline-block', animation: 'wave 2.5s ease-in-out infinite', transformOrigin: '70% 70%' }}>👋</span>
         </div>
       </div>
 
@@ -70,10 +64,14 @@ export default function EmployeeWelcome() {
             <div className="ew-holiday-list">
               {holidays.map((h, i) => (
                 <div key={i} className="ew-holiday-item">
-                  <div className="ew-holiday-date">
-                    <strong>{h.date}</strong> <span>{h.day}</span>
+                  <div className="ew-holiday-date-box">
+                    <strong>{h.date.split(' ')[0]}</strong>
+                    <span>{h.date.split(' ')[1]}</span>
                   </div>
-                  <div className="ew-holiday-name">{h.name}</div>
+                  <div className="ew-holiday-info">
+                    <span className="ew-holiday-name">{h.name}</span>
+                    <span className="ew-holiday-day">{h.day}</span>
+                  </div>
                 </div>
               ))}
             </div>

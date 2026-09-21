@@ -496,6 +496,17 @@ export default function HomePage({ userName = '' }) {
 
         {/* Right side actions */}
         <div className="gm-nav-actions">
+          
+          {/* User Profile Block */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginRight: '16px' }}>
+            <div style={{ width: '36px', height: '36px', borderRadius: '50%', backgroundColor: '#1c9c6e', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', lineHeight: '1.2' }}>
+              <span style={{ fontSize: '14px', fontWeight: '700', color: '#1f2937' }}>Hi {userName || 'Krushant'}</span>
+              <span style={{ fontSize: '12px', color: '#1c9c6e', cursor: 'pointer', fontWeight: '500' }}>View My Info</span>
+            </div>
+          </div>
 
           {/* Settings gear + chevron */}
           <button className="gm-nav-settings-btn" aria-label="Settings" onClick={() => setShowSettingsModal(true)}>

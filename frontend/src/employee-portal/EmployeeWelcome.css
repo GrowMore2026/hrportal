@@ -1,41 +1,91 @@
 .ew-container {
-  max-width: 1200px;
+  max-width: 1600px;
   margin: 0 auto;
+  padding-bottom: 40px;
+  animation: fadeIn 0.6s ease-out;
 }
 
-/* Hero Section */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Hero Section - Vibrant & Glassmorphic */
 .ew-hero {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 40px;
+  padding: 40px;
+  border-radius: 24px;
+  background: linear-gradient(135deg, #e0f2fe 0%, #dcfce7 100%);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(28, 156, 110, 0.1);
+}
+
+.ew-hero::before {
+  content: '';
+  position: absolute;
+  top: -50%; left: -50%; width: 200%; height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, transparent 60%);
+  animation: rotate 20s linear infinite;
+  z-index: 1;
+}
+
+@keyframes rotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 .ew-hero-text {
   max-width: 60%;
+  position: relative;
+  z-index: 2;
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(10px);
+  padding: 30px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
 }
 
 .ew-greeting {
-  font-size: 24px;
-  color: #1e3a5f; /* Dark blue from design */
-  margin: 0 0 16px 0;
-  font-weight: 600;
+  font-size: 32px;
+  color: #0f172a;
+  margin: 0 0 12px 0;
+  font-weight: 700;
+  letter-spacing: -0.5px;
 }
 
 .ew-quote {
   font-size: 16px;
-  color: #64748b;
+  color: #334155;
   margin: 0 0 8px 0;
+  font-style: italic;
 }
 
 .ew-author {
   font-size: 14px;
-  color: #94a3b8;
+  color: #1c9c6e;
   margin: 0;
+  font-weight: 600;
 }
 
 .ew-hero-img {
+  position: relative;
+  z-index: 2;
   flex-shrink: 0;
+}
+
+@keyframes wave {
+  0% { transform: rotate(0deg); }
+  10% { transform: rotate(14deg); }
+  20% { transform: rotate(-8deg); }
+  30% { transform: rotate(14deg); }
+  40% { transform: rotate(-4deg); }
+  50% { transform: rotate(10deg); }
+  60% { transform: rotate(0deg); }
+  100% { transform: rotate(0deg); }
 }
 
 /* Grid Layout */
@@ -51,21 +101,42 @@
   gap: 24px;
 }
 
-/* Cards Base */
+/* Cards Base - Premium UI */
 .ew-card {
   background: #ffffff;
-  border-radius: 12px;
-  border: 1px solid #e2e8f0;
-  padding: 24px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+  border-radius: 16px;
+  border: 1px solid #f1f5f9;
+  padding: 28px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
 }
 
+
+
+/* Card Header */
 .ew-card h3 {
-  margin: 0 0 20px 0;
-  font-size: 14px;
-  font-weight: 600;
-  color: #475569;
+  margin: 0 0 24px 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #1e293b;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
+
+/* Add a subtle accent bar at the top of cards */
+.ew-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 4px;
+  background: linear-gradient(90deg, #1c9c6e, #34d399);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+
 
 .ew-center {
   text-align: center;
@@ -77,49 +148,81 @@
 
 .ew-card p {
   color: #64748b;
-  font-size: 13px;
-  line-height: 1.5;
+  font-size: 14px;
+  line-height: 1.6;
   margin: 16px 0 0 0;
 }
 
 .ew-icon-placeholder {
   margin: 16px 0;
+  background: #f8fafc;
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease, background 0.3s ease;
 }
+
+
 
 /* Quick Access */
 .ew-qa-body {
   display: flex;
-  gap: 16px;
+  gap: 20px;
 }
 
 .ew-qa-links {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
 }
 
 .ew-qa-links a {
   text-decoration: none;
-  color: #1e40af; /* Link blue */
-  font-size: 13px;
+  color: #1e293b;
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: color 0.2s;
+}
+
+.ew-qa-links a::before {
+  content: '→';
+  color: #1c9c6e;
+  opacity: 0;
+  transform: translateX(-5px);
+  transition: all 0.2s;
 }
 
 .ew-qa-links a:hover {
-  text-decoration: underline;
+  color: #1c9c6e;
+}
+
+.ew-qa-links a:hover::before {
+  opacity: 1;
+  transform: translateX(0);
 }
 
 .ew-qa-highlight {
   flex: 1;
-  background-color: #fffaf0; /* Light orange/cream */
-  padding: 16px;
-  border-radius: 8px;
+  background: linear-gradient(135deg, #fffbeb, #fef3c7);
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid #fde68a;
+  display: flex;
+  align-items: center;
 }
 
 .ew-qa-highlight p {
   margin: 0;
-  font-size: 12px;
-  color: #b45309;
+  font-size: 13px;
+  color: #92400e;
+  font-weight: 500;
+  line-height: 1.5;
 }
 
 /* Upcoming Holidays */
@@ -127,7 +230,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 
 .ew-card-header h3 {
@@ -136,7 +239,10 @@
 
 .ew-card-header svg {
   cursor: pointer;
+  color: #94a3b8;
+  transition: color 0.2s;
 }
+.ew-card-header svg:hover { color: #1c9c6e; }
 
 .ew-holiday-list {
   display: flex;
@@ -146,22 +252,50 @@
 
 .ew-holiday-item {
   display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px;
+  border-radius: 12px;
+  background: #f8fafc;
+  transition: background 0.2s;
+}
+
+
+
+.ew-holiday-date-box {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 8px 12px;
+  text-align: center;
+  min-width: 64px;
+}
+
+.ew-holiday-date-box strong {
+  display: block;
+  font-size: 16px;
+  color: #1c9c6e;
+  font-weight: 700;
+}
+.ew-holiday-date-box span {
+  font-size: 11px;
+  color: #64748b;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.ew-holiday-info {
+  display: flex;
   flex-direction: column;
   gap: 4px;
 }
 
-.ew-holiday-date {
-  font-size: 14px;
-  color: #334155;
-}
-
-.ew-holiday-date span {
-  font-size: 12px;
-  color: #94a3b8;
-  margin-left: 8px;
-}
-
 .ew-holiday-name {
+  font-size: 15px;
+  color: #1e293b;
+  font-weight: 600;
+}
+.ew-holiday-day {
   font-size: 13px;
   color: #64748b;
 }
@@ -170,24 +304,28 @@
 .ew-status-body {
   display: flex;
   gap: 16px;
-  align-items: flex-start;
+  align-items: center;
+  padding: 16px;
+  background: #f8fafc;
+  border-radius: 12px;
 }
 
 .ew-status-icon {
-  background-color: #f1f5f9;
-  padding: 10px;
-  border-radius: 8px;
+  background-color: #ffffff;
+  padding: 12px;
+  border-radius: 10px;
   flex-shrink: 0;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+  color: #1c9c6e;
 }
 
 .ew-status-body p {
   margin: 0;
+  color: #475569;
+  font-size: 14px;
+  line-height: 1.5;
 }
 
 /* Specific heights to match masonry look */
-.ew-review {
-  min-height: 240px;
-}
-.ew-payslip {
-  min-height: 280px;
-}
+.ew-review { min-height: 260px; }
+.ew-payslip { min-height: 300px; }
